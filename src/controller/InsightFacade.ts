@@ -15,11 +15,18 @@ export default class InsightFacade implements IInsightFacade {
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
-            JSZip.loadAsync(content).then(function (zip: any) {
-                zip.ForEach(function (relativePath:any, zipEntry:any) {  // 2) print entries
-                    zip.file(relativePath).async("string")
+            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
+                Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {  // 2) print entries
+                    zip.files[relativePath].async("string")
+                .then(function (txt: string) {
+                    console.log(txt);
+                    fulfill();
+                }).catch(function (err: string) {
+                    reject(err);
                 })
+            })
             }).catch(function (err: string) {
+                console.log(err);
                 reject(err);
             })
 
