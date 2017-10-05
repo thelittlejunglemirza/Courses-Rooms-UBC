@@ -50,63 +50,62 @@ export default class InsightFacade implements IInsightFacade {
 
         return new Promise(function (fulfill, reject) {                                                 // Return Promise:
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {                         // Read ZIP, check validity. If valid,
+                var pArr:Array<Promise<any>> = [];
                 Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {  // Check each key in the Object read from ZIP
-                    zip.files[relativePath].async("string").then(function (txt: string) {              // Get String with Promise.
-                        if(isJsonString(txt)) {
-                            var obj = JSON.parse(txt);
+                    pArr.push(zip.files[relativePath].async("string"));
+                });
+                Promise.all(pArr).then(function (txtArr) {
+                    var flagEndOfTexts = false;
+                    var flagEnd = false;
+                    stream.write('[' + '\n');
+                    var sep = "";
+                    for (let i of txtArr) {
+                        if(i == txtArr[txtArr.length-1]){
+                            flagEndOfTexts = true;
+                        }
+                        if (isJsonString(i)) {
+                            var obj = JSON.parse(i);
                             obj = obj['result'];
-
                             // turning the string into a JSON object
                             // to exclude the section labled 'rank' which we dont need
-
-                            for (let i of obj) {
+                            for (let j of obj) {
+                                if(j == obj[obj.length-1] && flagEndOfTexts == true){
+                                    flagEnd = true;
+                                }
                                 // requirement is only 9 fields of the 36 so we can selectively thake the 9 by
                                 // the following mapping
                                 var dict = {
-                                    "courses_dept": i['Subject'],
-                                    "courses_id": i['Course'],
-                                    "courses_avg": i['Avg'],
-                                    "courses_instructor": i['Professor'],
-                                    "courses_title": i['Title'],
-                                    "courses_pass": i['Pass'],
-                                    "courses_fail": i['Fail'],
-                                    "courses_audit": i['Audit'],
-                                    "courses_uuid": i['id'].toString()
+                                    "courses_dept": j['Subject'],
+                                    "courses_id": j['Course'],
+                                    "courses_avg": j['Avg'],
+                                    "courses_instructor": j['Professor'],
+                                    "courses_title": j['Title'],
+                                    "courses_pass": j['Pass'],
+                                    "courses_fail": j['Fail'],
+                                    "courses_audit": j['Audit'],
+                                    "courses_uuid": j['id'].toString()
                                 };
 
-                                var dictstring = JSON.stringify(dict);// to be able to write it back on disk we will make it
-                                // a string.
-                                //console.log(dictstring);
-
-
-                                try {                                                // Try to..
-                                    // Write on disk.
-                                    stream.write(dictstring + '\n');
-                                    //fulfill(resp);
-                                } catch (err) {                                       // In case of error
-                                    console.log('1');                               // Log it.
-                                    resp.code = 400;                                // Update with error code.
-                                    resp.body = {err};                              // Update with error body.
-                                    reject(resp);                                   // Return a rejected Promise.
+                                var dictstring = JSON.stringify(dict);  // to be able to write it back on disk we will make it
+                                                                        // a string.
+                                stream.write( sep + dictstring );
+                                if (!sep){
+                                    sep = ',\n'
                                 }
-
-
-                                //console.log(dict);
                             }
                         }
-                        fulfill();
-                        //console.log(obj['result']);
-                    }).catch(function (err: string) {                           // If String can't be obtained,
-                        console.log('2');                                       // Log it.
-                        console.log(err);                                       // Log the error.
-                        resp.code = 400;                                        // Update with error code.
-                        resp.body = {err};                                      // Update with error body.
-                        reject(resp);                                           // Return Rejected Promise.
-                    })
+                    }
+                    stream.write('\n]');
+                    fulfill(resp);
+                }).catch(function (err) {
+                    console.log('1');
+                    console.log(err);// Log it.
+                    resp.code = 400;                                                // Update with error code.
+                    resp.body = {err};                                              // Update with error body.
+                    reject(resp);
                 });
-                fulfill(resp);                                                  // Finally, fulfill.
             }).catch(function (err: string) {                                   // If ZIP is not valid
-                console.log('3');
+                console.log('2');
                 console.log(err);// Log it.
                 resp.code = 400;                                                // Update with error code.
                 resp.body = {err};                                              // Update with error body.
