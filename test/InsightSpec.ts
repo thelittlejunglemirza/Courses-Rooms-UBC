@@ -27,6 +27,7 @@ describe("InsightSpec", function () {
             expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {
             console.log("in catch... the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
+            expect.fail();
         })
 
     });
@@ -40,6 +41,7 @@ describe("InsightSpec", function () {
             expect(insightResponse.code).to.deep.equal(201);
         }).catch(function (insightResponse: InsightResponse) {
             console.log("in catch... the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
+            expect.fail();
         })
 
     });

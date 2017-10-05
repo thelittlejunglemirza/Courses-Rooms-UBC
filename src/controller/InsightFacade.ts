@@ -17,24 +17,24 @@ export default class InsightFacade implements IInsightFacade {
 
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-        var resp: InsightResponse = {
-            code: 0,
-            body: {}
+        var resp: InsightResponse = {                                                       // Init a new Insight Response
+            code: 0,                                                                        // With an initial code of 0
+            body: {}                                                                        // and an empty body
         }
-        if (fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")) {
-            resp.code = 201;
-            fs.unlink("Data_Set/MyDatasetInsight"+id+".json");
-        }else{
-            resp.code = 204;
+        if (fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")) {                 // If file exists,
+            resp.code = 201;                                                                // operation will be successful; id exists
+            fs.unlink("Data_Set/MyDatasetInsight"+id+".json");                       // Remove file.
+        }else{                                                                              // If file doesn't exist,
+            resp.code = 204;                                                                // operation will be successful; new id
         }
 
-        var stream = fs.createWriteStream("Data_Set/MyDatasetInsight"+id+".json");
-        stream.on('error', console.error);
+        var stream = fs.createWriteStream("Data_Set/MyDatasetInsight"+id+".json");   // Init a Writable Stream object.
+        stream.on('error', console.error);                                          // On error, log the error.
 
-        return new Promise(function (fulfill, reject) {
-            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
-                Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {
-                    zip.files[relativePath].async("string").then(function (txt: string) {
+        return new Promise(function (fulfill, reject) {                                                 // Return Promise:
+            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {                         // Read ZIP, check validity. If valid,
+                Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {  // Check each key in the Object read from ZIP
+                    zip.files[relativePath].async("string").then(function (txt: string) {              // Get String with Promise.
 
                         let obj = JSON.parse(txt);      // turning the string into a JSON object
                         obj = obj['result'];            // to exclude the section labled 'rank' which we dont need
@@ -54,36 +54,36 @@ export default class InsightFacade implements IInsightFacade {
                                 "courses_uuid" : i['id'].toString()
                             };
 
-                            var dictstring = JSON.stringify(dict); // to be able to write it back on disk we will make it
+                            var dictstring = JSON.stringify(dict);  // to be able to write it back on disk we will make it
                                                                     // a string.
-                            try{
-                                stream.write(dictstring + ';' +'\n');
+                            try{                                                // Try to..
+                                stream.write(dictstring + ';' +'\n');   // Write on disk.
                                 //fulfill(resp);
-                            }catch (err){
-                                console.log('1');
-                                resp.code = 400;
-                                resp.body = {err};
-                                reject(resp);
+                            }catch (err){                                       // In case of error
+                                console.log('1');                               // Log it.
+                                resp.code = 400;                                // Update with error code.
+                                resp.body = {err};                              // Update with error body.
+                                reject(resp);                                   // Return a rejected Promise.
                             }
 
                             //console.log(dict);
                         }
 
                         //console.log(obj['result']);
-                    }).catch(function (err: string) {
-                        console.log('2');
-                        console.log(err);
-                        resp.code = 400;
-                        resp.body = {err};
-                        reject(resp);
+                    }).catch(function (err: string) {                           // If String can't be obtained,
+                        console.log('2');                                       // Log it.
+                        console.log(err);                                       // Log the error.
+                        resp.code = 400;                                        // Update with error code.
+                        resp.body = {err};                                      // Update with error body.
+                        reject(resp);                                           // Return Rejected Promise.
                     })
-                })
-                fulfill(resp);
-            }).catch(function (err: string) {
-                console.log('3');
-                resp.code = 400;
-                resp.body = {err};
-                reject(resp);
+                });
+                fulfill(resp);                                                  // Finally, fulfill.
+            }).catch(function (err: string) {                                   // If ZIP is not valid
+                console.log('3');                                               // Log it.
+                resp.code = 400;                                                // Update with error code.
+                resp.body = {err};                                              // Update with error body.
+                reject(resp);                                                   // Reject.
             })
         });
     }
