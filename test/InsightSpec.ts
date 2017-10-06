@@ -8,6 +8,10 @@ import Log from "../src/Util";
 
 describe("InsightSpec", function () {
 
+    let fs   = require('fs');
+    let rimraf = require('rimraf');
+    rimraf('./Data_Set', function(){ console.log('Data_Set reset.')});
+
     var insightFacade: InsightFacade = null;
     beforeEach(function () {
         insightFacade = new InsightFacade;
@@ -20,7 +24,6 @@ describe("InsightSpec", function () {
 
     it ("adding the dataset for the first time to make sure that it creates the json file with code 204" , function () {
         this.timeout(10000);
-        let fs   = require('fs');
         let data = fs.readFileSync('test/courses.zip');
         return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
@@ -34,7 +37,6 @@ describe("InsightSpec", function () {
 
     it ("adding the dataset for the second time to make sure that it replaces the json file with code 201" , function () {
         this.timeout(10000);
-        let fs   = require('fs');
         let data = fs.readFileSync('test/courses.zip');
         return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
@@ -46,5 +48,30 @@ describe("InsightSpec", function () {
 
     });
 
+    it ("Adding a valid ZIP with no real data should return an error code of 400." , function () {
+        this.timeout(10000);
+        let data = fs.readFileSync('test/nocourses.zip');
+        return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
+            Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("Rejected with error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Adding an invalid ZIP should return error code 400." , function () {
+        this.timeout(10000);
+        let data = fs.readFileSync('test/notazip');
+        return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
+            Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("Rejected with error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
 
 });
