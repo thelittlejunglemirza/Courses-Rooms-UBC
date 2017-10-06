@@ -52,13 +52,13 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {                                                 // Return Promise:
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {                         // Read ZIP, check validity. If valid,
                 let pArr:Array<Promise<any>> = [];                                                      // Init Promise Array
-
-                if(zip.files === null) {
+                /*
+                if(zip.files === null) {                                                                // TODO: Check empty ZIP(?)
                     console.log('0');                                                                   // Log-tracking(0).
                     resp.code = 400;                                                                    // Update with error code.
                     reject(resp);                                                                       // Reject the Promise.
                 }
-
+                */
                 Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {  // Check each key in the Object read from ZIP
                     pArr.push(zip.files[relativePath].async("string"));                                 // Attempt to get String Promises
                 });
@@ -101,10 +101,16 @@ export default class InsightFacade implements IInsightFacade {
                                     sep = ',\n'
                                 }
                             }
+                            stream.write('\n]');                                // Close off the array.
+                            fulfill(resp);                                              // Finally, fulfill.
                         }
+                        /*                                                              // TODO: CASE: NOT PARSEABLE ELSE
+                        else{
+                            resp.code = 400;
+                            reject(resp);
+                        }
+                        */
                     }
-                    stream.write('\n]');                                // Close off the array.
-                    fulfill(resp);                                              // Finally, fulfill.
                 }).catch(function (err) {
                     console.log('1');                                           // Log-tracking(1).
                     console.log(err);                                           // Log error.

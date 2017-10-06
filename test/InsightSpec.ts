@@ -48,7 +48,7 @@ describe("InsightSpec", function () {
 
     });
 
-    it ("Adding a valid ZIP with no real data should return an error code of 400." , function () {
+    it ("Adding a valid ZIP with no data at all should return an error code of 400." , function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/nocourses.zip');
         return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
@@ -64,6 +64,19 @@ describe("InsightSpec", function () {
     it ("Adding an invalid ZIP should return error code 400." , function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/notazip');
+        return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
+            Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("Rejected with error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Adding a valid ZIP with invalid data should return error code 400." , function () {
+        this.timeout(10000);
+        let data = fs.readFileSync('test/invalid.zip');                             // 1 file, {] <- invalid JSON
         return insightFacade.addDataset("20", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect.fail();
