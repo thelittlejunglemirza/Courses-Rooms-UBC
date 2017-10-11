@@ -102,7 +102,7 @@ describe("InsightSpec", function () {
 
     });
 
-    it ("adding a second dataset that is much shorter, expecting code 201, and correct overwrite of existing dataset" , function () {
+    it ("adding a second dataset that is much longer, expecting code 201, and correct overwrite of existing dataset" , function () {
         this.timeout(10000);
         let fs   = require('fs');
         let data = fs.readFileSync('test/2.zip');
@@ -159,7 +159,7 @@ describe("InsightSpec", function () {
     });
 
     it ("removing a dataset that is previously added" , function () {
-        this.timeout(10000);
+        this.timeout(20000);
         return insightFacade.removeDataset("4").then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);

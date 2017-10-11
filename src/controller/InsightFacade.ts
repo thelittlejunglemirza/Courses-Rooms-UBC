@@ -41,7 +41,7 @@ export default class InsightFacade implements IInsightFacade {
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {                         // Read ZIP, check validity. If valid,
                 if (fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")) {                 // If file exists,
                     resp.code = 201;                                                                // operation will be successful; id exists
-                    fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");                       // Remove file.
+                    fs.unlink("./Data_Set/MyDatasetInsight"+id+".json");                       // Remove file.
                 }else{                                                                              // If file doesn't exist,
                     resp.code = 204;                                                                // operation will be successful; new id
                 }
@@ -135,6 +135,12 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise <InsightResponse> {
-        return null;
+        var resp: InsightResponse = {                                                       // Init a new Insight Response
+            code: 0,                                                                        // With an initial code of 0
+            body: {}                                                                        // and an empty body
+        };
+        return new Promise(function(fulfill, reject){
+            fulfill(resp);
+        });
     }
 }
