@@ -99,14 +99,14 @@ export default class InsightFacade implements IInsightFacade {
                     console.log('1');                                           // Log-tracking(1).
                     console.log(err);                                           // Log error.
                     resp.code = 400;                                            // Update with error code.
-                    resp.body = {err};                                          // Update with error body.
+                    resp.body = {error: err};                                          // Update with error body.
                     reject(resp);                                               // Reject the Promise.
                 });
             }).catch(function (err: string) {                                   // If ZIP is not valid
                 console.log('2');                                               // Log-tracking(2).
                 console.log(err);                                               // Log error.
                 resp.code = 400;                                                // Update with error code.
-                resp.body = {err};                                              // Update with error body.
+                resp.body = {error: err};                                              // Update with error body.
                 reject(resp);                                                   // Reject.
             })
         });
