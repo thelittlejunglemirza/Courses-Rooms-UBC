@@ -9,8 +9,11 @@ import Log from "../src/Util";
 describe("InsightSpec", function () {
 
     let fs   = require('fs');
+
+    /*
     let rimraf = require('rimraf');
     rimraf('./Data_Set', function(){ console.log('Data_Set reset.')});
+    */
 
     var insightFacade: InsightFacade = null;
     beforeEach(function () {

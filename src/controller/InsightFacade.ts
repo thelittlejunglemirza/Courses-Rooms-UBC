@@ -4,6 +4,8 @@
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 
 import Log from "../Util";
+import {Tree} from "../AST/Tree";
+import {ASTNode} from "../AST/ASTNode";
 
 var JSZip = require("jszip");
 var fs = require('fs');
@@ -126,7 +128,7 @@ export default class InsightFacade implements IInsightFacade {
                     resp.code = 404;                     // there is no dataset with this id
                     reject(resp);
                 }else {
-                    fs.unlink("./Data_Set/MyDatasetInsight"+id+".json");
+                    fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
                     resp.code = 204;
                     fulfill(resp);
                 }
@@ -139,7 +141,39 @@ export default class InsightFacade implements IInsightFacade {
             code: 0,                                                                        // With an initial code of 0
             body: {}                                                                        // and an empty body
         };
+        function first(obj: Object) {
+            for (var a in obj) return a;
+        }
+        function recursive(data: any, tree: Tree, curr: ASTNode){
+            if(Array.isArray(data)){
+                for(let i of data){
+                    let node = new ASTNode(first(i));
+                    console.log(first(node));
+                    curr.pushChild(node);
+                    recursive(i[first(i)], tree, node);
+                    //console.log(i);
+                }
+            }else{
+                console.log(data);
+                curr.setValue(data);
+            }
+        }
+
         return new Promise(function(fulfill, reject){
+
+            try{
+                query = query["WHERE"];
+                //console.log(first(query));
+                //console.log(query[first(query)]);
+                let root = new ASTNode(first(query));
+                let tree = new Tree(root);
+                recursive(query[first(query)], tree, root);
+                console.log(root);
+
+
+            }catch (err){
+                reject(resp);
+            }
             fulfill(resp);
         });
     }

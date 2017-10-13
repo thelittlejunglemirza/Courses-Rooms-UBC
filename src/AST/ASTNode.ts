@@ -1,15 +1,21 @@
-import {AST} from "parse5";
 
-export class ASTNode{
-    private right: ASTNode;
-    private left: ASTNode;
+
+export class  ASTNode{
+    private kids: Array<ASTNode>;
     private key: string;
-    private val: any;
-public ASTNode(right: ASTNode, left:ASTNode, key:string, val:any){
-    this.right = right;
-    this.left = left;
-    this.key = key;
-    this.val = val;
-}
+    private val: Object;
+    constructor (key:string){
+        this.key = key;
+        this.kids = [];
+        this.val = null;
+    }
+
+    pushChild(child: ASTNode){
+        this.kids.push(child);
+    }
+
+    setValue(value: Object){
+        this.val = value;
+    }
 
 }
