@@ -177,6 +177,9 @@ export default class InsightFacade implements IInsightFacade {
             var bool:boolean = false;
             switch (node.operand){
                 case 'IS':
+                    if (!val.isString()){
+                        throw "Invalid IS";
+                    }
                     if(val.startsWith('*') && val.endsWith('*')){
                         bool = line[key].indexOf(val.substring(1,val.length - 1));
                         break;
@@ -194,12 +197,21 @@ export default class InsightFacade implements IInsightFacade {
                     bool = (val != line[key]);
                     break;
                 case 'LT':
+                    if (!val.isNumber()){
+                        throw "Invalid LT";
+                    }
                     bool = (line[key] < val);
                     break;
                 case 'GT':
+                    if (!val.isNumber()){
+                        throw "Invalid GT";
+                    }
                     bool = (val < line[key]);
                     break;
                 case 'EQ':
+                    if (!val.isNumber()){
+                        throw "Invalid EQ";
+                    }
                     bool = (val == line[key]);
                     break;
                 default:
@@ -210,6 +222,9 @@ export default class InsightFacade implements IInsightFacade {
         function calculateNode(root: ASTNode): boolean{
             switch (root.operand){
                 case 'AND':
+                    if(root.noChild()){
+                        throw "Empty AND"
+                    }
                     let index = 0;
                     var curr = true;
                     while(curr != false && index <= root.index){
@@ -221,18 +236,27 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     return false;
                 case 'OR':
+                    if(root.noChild()){
+                        throw "Empty OR"
+                    }
                     for(let i of root.children){
                         if (i == true){
                             return true;
                         }
                     }
                     return false;
+                case 'NOT':
+                    if(root.noChild() || root.childrenCount > 1){
+                        throw "Invalid NOT"
+                    }
+                    return !root.children[0];
+
                 default:
                     return false;
             }
         }
         function traverseHelper(node: ASTNode, line: Object): boolean{
-            if(node.operand == 'IS' || node.operand == 'NOT' || node.operand == 'EQ' || node.operand == 'GT' || node.operand == 'LT' ){
+            if(node.operand == 'IS' ||  node.operand == 'EQ' || node.operand == 'GT' || node.operand == 'LT' ){
                 return calculateVal(node, line);
             }
             else{;
@@ -258,19 +282,20 @@ export default class InsightFacade implements IInsightFacade {
                 let root = new ASTNode(first(where));
                 let tree = new Tree(root);
                 recursive(where[first(where)], tree, root);
-                try{
+                try {
                     let dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
+                }catch (err){
+                resp.code = 424;
+                resp.body = {error: err};
+                reject(resp);
+                }
+                let dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
                 let obj = JSON.parse(dataset);
                 for(let i of obj){
                     let temp = cloneNode(tree.root);
                     if(traverse(temp, i)){
                         pCaught.push(i);
                     }
-                }
-                }catch (err){
-                    resp.code = 424;
-                    resp.body = {error: err};
-                    reject(resp);
                 }
             }catch (err){
                 resp.code = 400;
@@ -279,17 +304,26 @@ export default class InsightFacade implements IInsightFacade {
             }
             let colTrim = [];
             let options = query["OPTIONS"];
-            let cols = options["COLUMNS"];
-            for(let i of pCaught){
-                var obj : { [key:string] : any } = {};
-                for(let k of cols){
-                    obj[k] = i[k];
+            try {
+                let cols = options["COLUMNS"];
+                if (cols.length == 0){
+                    throw "Empty columns"
                 }
-                colTrim.push(obj);
+                for (let i of pCaught) {
+                    var obj: { [key: string]: any } = {};
+                    for (let k of cols) {
+                        obj[k] = i[k];
+                    }
+                    colTrim.push(obj);
+                }
+            }catch (err){
+                resp.code = 400;
+                resp.body = {error: err};
+                reject(resp);
             }
             var obj : { [key:string] : any} = {};
             obj["result"] = colTrim;
-            console.log(obj);
+            //console.log(obj);
             resp.body = obj;
             resp.code = 200;
             fulfill(resp);
