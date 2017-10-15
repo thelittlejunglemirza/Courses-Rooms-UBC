@@ -141,36 +141,44 @@ export default class InsightFacade implements IInsightFacade {
             code: 0,                                                                        // With an initial code of 0
             body: {}                                                                        // and an empty body
         };
+
+        // Returns the first item in an Object.
         function first(obj: Object) {
             for (var a in obj) return a;
         }
+
+        // Forms a tree recursively.
         function recursive(data: any, tree: Tree, curr: ASTNode){
-            if(Array.isArray(data)){
-                for(let i of data){
-                    let node = new ASTNode(first(i));
-                    curr.pushChild(node);
-                    recursive(i[first(i)], tree, node);
+            if(Array.isArray(data)){                                                        // If it's an array..
+                for(let i of data){                                                         // Cycle through it
+                    let node = new ASTNode(first(i));                                       // Create new node from the first item
+                    curr.pushChild(node);                                                   // Push into the list of children of the current node
+                    recursive(i[first(i)], tree, node);                                     // Recursive call
                 }
             }else{
-                curr.setValue(data);
+                curr.setValue(data);                                                        // Otherwise, just set the current node's value
             }
         }
+
+        // Creates a copy of a root node to safely
         function cloneNode(old: ASTNode) {
-            let cmpy = new ASTNode(old.operand);
-            cmpy.index = old.index;
-            if(old.noChild()){
-                cmpy.childrenCount = old.childrenCount;
+            let cmpy = new ASTNode(old.operand);                                            // Create a node from the node's string
+            cmpy.index = old.index;                                                         // Copy index
+            if(old.noChild()){                                                              // If it has no children
+                cmpy.childrenCount = old.childrenCount;                                     // Copy over directly and return.
                 cmpy.key = old.key;
                 cmpy.val = old.val;
                 return cmpy;
 
             }
-            for(let i of old.children){
-                cmpy.children.push(cloneNode(i));
+            for(let i of old.children){                                                     // Cycle through the children of the old node
+                cmpy.children.push(cloneNode(i));                                           // Clone and push.
                 cmpy.childrenCount ++;
             }
-            return cmpy;
+            return cmpy;                                                                    // Finally, return.
         }
+
+        //
         function calculateVal(node: ASTNode, line: any){
             var val = node.val;
             var key:string = node.key;
@@ -216,6 +224,7 @@ export default class InsightFacade implements IInsightFacade {
             }
             return bool;
         }
+
         function calculateNode(root: ASTNode): boolean{
             switch (root.operand){
                 case 'AND':
@@ -252,6 +261,7 @@ export default class InsightFacade implements IInsightFacade {
                     return false;
             }
         }
+
         function traverseHelper(node: ASTNode, line: Object): boolean{
             if(node.operand == 'IS' ||  node.operand == 'EQ' || node.operand == 'GT' || node.operand == 'LT' ){
                 return calculateVal(node, line);

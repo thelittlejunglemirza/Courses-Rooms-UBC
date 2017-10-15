@@ -30,21 +30,20 @@ describe("PerformQuerrySpec", function () {
     let data2 = fs.readFileSync('test/querry2.txt');
     let obj2 = JSON.parse(data2);
 
-    it ("test if perform querry gets to WHERE" , function () {
+    it.only ("test if perform query gets to WHERE" , function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj).then(function(insightResponse: InsightResponse){
-            //Log.test('Code: ' + insightResponse.code);
+            Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(200);
         }).catch(function (insightResponse: InsightResponse) {
-            //console.log("in catch:");
+            console.log("in catch:");
             console.log("the promise returned by PQ rejected by the error body: " + insightResponse.code);
             expect.fail();
         })
 
     });
-
-    it ("test if perform querry gets to WHERE second time" , function () {
+    it.only("test if perform query gets to WHERE second time" , function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj2).then(function(insightResponse: InsightResponse){

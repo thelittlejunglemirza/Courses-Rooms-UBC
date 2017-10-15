@@ -16,6 +16,7 @@ export class  ASTNode{
         this.index = 0;
     }
 
+    // Pushes a child node into the list of children; Increments childrenCount.
     pushChild(child: ASTNode){
         this.children.push(child);
         this.childrenCount ++;
@@ -28,6 +29,7 @@ export class  ASTNode{
         this.val = value[this.key];
     }
 
+    // Checks if the node has no children.
     noChild(){
         if(this.childrenCount == 0){
             return true;
