@@ -301,6 +301,7 @@ export default class InsightFacade implements IInsightFacade {
                 resp.code = 424;
                 resp.body = {error: err};
                 reject(resp);
+                return;
                 }
                 let dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
                 let obj = JSON.parse(dataset);
@@ -316,6 +317,7 @@ export default class InsightFacade implements IInsightFacade {
                 resp.code = 400;
                 resp.body = {error: err};
                 reject(resp);
+                return;
             }
             let colTrim = [];
             let options = query["OPTIONS"];
@@ -336,6 +338,7 @@ export default class InsightFacade implements IInsightFacade {
                 resp.code = 400;
                 resp.body = {error: err};
                 reject(resp);
+                return;
             }
             var obj : { [key:string] : any} = {};
             let order = options["ORDER"];
@@ -343,16 +346,15 @@ export default class InsightFacade implements IInsightFacade {
                 resp.code = 400;
                 resp.body = {error: "Invalid ORDER"};
                 reject(resp);
+                return;
             }else{
                 sort(order, colTrim);
             }
-            //obj["result"] = colTrim;  //**** uncomment this to see the output
-            console.log(obj);
-            if(resp.code == 0){
-                resp.body = obj;
-                resp.code = 200;
-                fulfill(resp);
-            }
+            obj["result"] = colTrim;  //**** uncomment this to see the output
+            console.log(obj['result']);
+            resp.body = obj;
+            resp.code = 200;
+            fulfill(resp);
         });
     }
 }

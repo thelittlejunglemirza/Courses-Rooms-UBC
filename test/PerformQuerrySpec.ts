@@ -30,7 +30,7 @@ describe("PerformQuerrySpec", function () {
     let data2 = fs.readFileSync('test/querry2.txt');
     let obj2 = JSON.parse(data2);
 
-    it.only ("test if perform query gets to WHERE" , function () {
+    it("test if perform query gets to WHERE" , function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj).then(function(insightResponse: InsightResponse){
@@ -43,7 +43,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-    it.only("test if perform query gets to WHERE second time" , function () {
+    it("test if perform query gets to WHERE second time" , function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj2).then(function(insightResponse: InsightResponse){
