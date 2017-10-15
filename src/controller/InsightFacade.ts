@@ -38,7 +38,6 @@ export default class InsightFacade implements IInsightFacade {
         if (!fs.existsSync("./Data_Set")) {                                          // Create directory if not found.
             fs.mkdirSync("./Data_Set")
         }
-
         return new Promise(function (fulfill, reject) {                                                 // Return Promise:
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {                         // Read ZIP, check validity. If valid,
                 if (fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")) {                 // If file exists,
@@ -81,7 +80,6 @@ export default class InsightFacade implements IInsightFacade {
                                     "courses_audit": j['Audit'],
                                     "courses_uuid": j['id'].toString()
                                 };
-
                                 let dictstring = JSON.stringify(dict);          // to be able to write it back on disk we will make it
                                                                                 // a string.
                                 stream.write( sep + dictstring );       // Write separator + string to disk
@@ -189,13 +187,17 @@ export default class InsightFacade implements IInsightFacade {
                         throw "Invalid IS";
                     }
                     if(val.startsWith('*') && val.endsWith('*')){
-                        bool = line[key].indexOf(val.substring(1,val.length - 1));
+                        if(!(line[key].endsWith(val.substring(1,val.length - 1)))){
+                            bool=line[key].startsWith(val.substring(1,val.length - 1));
+                            break;
+                        }
+                        bool = line[key].endsWith(val.substring(1,val.length));
                         break;
                     }else if(val.startsWith('*')){
-                        bool = line[key].indexOf(val.substring(1,val.length));
+                        bool = line[key].endsWith(val.substring(1,val.length));
                         break;
                     }else if(val.endsWith('*')){
-                        bool = line[key].indexOf(val.substring(0,val.length - 1));
+                        bool = line[key].startsWith(val.substring(0,val.length - 1));
                         break;
                     }else{
                         bool = (line[key].startsWith(val));
@@ -350,7 +352,17 @@ export default class InsightFacade implements IInsightFacade {
             }else{
                 sort(order, colTrim);
             }
-            obj["result"] = colTrim;  //**** uncomment this to see the output
+            obj["result"] = colTrim;
+            /*
+            const content = JSON.stringify(obj);
+            fs.writeFile("test/Querry.json", content, 'utf8', function (err: string) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                console.log("The file was saved!");
+            });
+            */
             //console.log(obj['result']);
             resp.body = obj;
             resp.code = 200;

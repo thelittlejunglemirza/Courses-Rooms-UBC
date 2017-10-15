@@ -29,6 +29,9 @@ describe("PerformQuerrySpec", function () {
     let obj = JSON.parse(data);
     let data2 = fs.readFileSync('test/querry2.txt');
     let obj2 = JSON.parse(data2);
+    let data3 = fs.readFileSync('test/querry3.txt');
+    let obj3 = JSON.parse(data3);
+
 
     it("test if perform query gets to WHERE" , function () {
         this.timeout(10000);
@@ -47,6 +50,18 @@ describe("PerformQuerrySpec", function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj2).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect.fail();
+        })
+
+    });
+    it("test if perform query all courses with same department" , function () {
+        this.timeout(10000);
+        return insightFacade.performQuery(obj3).then(function(insightResponse: InsightResponse){
             //Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(200);
         }).catch(function (insightResponse: InsightResponse) {
