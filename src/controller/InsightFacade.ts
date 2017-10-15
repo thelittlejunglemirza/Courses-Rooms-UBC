@@ -351,7 +351,7 @@ export default class InsightFacade implements IInsightFacade {
                 sort(order, colTrim);
             }
             obj["result"] = colTrim;  //**** uncomment this to see the output
-            console.log(obj['result']);
+            //console.log(obj['result']);
             resp.body = obj;
             resp.code = 200;
             fulfill(resp);
