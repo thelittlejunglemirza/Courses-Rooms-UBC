@@ -272,6 +272,12 @@ export default class InsightFacade implements IInsightFacade {
                 return calculateVal(root, line);
             }
         }
+        function sort(key: any, arr: Array<any>){
+            return arr.sort(function(a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            });
+        }
         return new Promise(function(fulfill, reject){
             let pCaught = [];
             try{
@@ -296,15 +302,16 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
             }catch (err){
-                console.log(err);
+                //console.log(err);
                 resp.code = 400;
                 resp.body = {error: err};
                 reject(resp);
             }
             let colTrim = [];
             let options = query["OPTIONS"];
+            let cols = [];
             try {
-                let cols = options["COLUMNS"];
+                cols = options["COLUMNS"];
                 if (cols.length == 0){
                     throw "Empty columns"
                 }
@@ -321,7 +328,15 @@ export default class InsightFacade implements IInsightFacade {
                 reject(resp);
             }
             var obj : { [key:string] : any} = {};
-            obj["result"] = colTrim;
+            let order = options["ORDER"];
+            if(cols.indexOf(order) == -1){
+                resp.code = 400;
+                resp.body = {error: "Invalid ORDER"};
+                reject(resp);
+            }else{
+                sort(order, colTrim);
+            }
+            //obj["result"] = colTrim;  //**** uncomment this to see the output
             console.log(obj);
             if(resp.code == 0){
                 resp.body = obj;
