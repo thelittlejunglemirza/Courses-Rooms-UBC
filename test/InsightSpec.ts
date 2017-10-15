@@ -41,7 +41,7 @@ describe("InsightSpec", function () {
     it ("adding the dataset for the first time to make sure that it creates the json file with code 204" , function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/1.zip');
-        return insightFacade.addDataset("1", data.toString('base64')).then(function(insightResponse: InsightResponse){
+        return insightFacade.addDataset("courses", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {

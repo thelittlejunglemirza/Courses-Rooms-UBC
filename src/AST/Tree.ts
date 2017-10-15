@@ -3,9 +3,9 @@
 import {ASTNode} from "./ASTNode";
 
 export class Tree{
-    private root: ASTNode;
+    public root: ASTNode;
     constructor (root: ASTNode){
         this.root = root;
     }
-    
+
 }

@@ -43,7 +43,7 @@ export default class InsightFacade implements IInsightFacade {
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {                         // Read ZIP, check validity. If valid,
                 if (fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")) {                 // If file exists,
                     resp.code = 201;                                                                // operation will be successful; id exists
-                    fs.unlink("./Data_Set/MyDatasetInsight"+id+".json");                       // Remove file.
+                    fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");                       // Remove file.
                 }else{                                                                              // If file doesn't exist,
                     resp.code = 204;                                                                // operation will be successful; new id
                 }
@@ -148,32 +148,150 @@ export default class InsightFacade implements IInsightFacade {
             if(Array.isArray(data)){
                 for(let i of data){
                     let node = new ASTNode(first(i));
-                    console.log(first(node));
                     curr.pushChild(node);
                     recursive(i[first(i)], tree, node);
-                    //console.log(i);
                 }
             }else{
-                console.log(data);
                 curr.setValue(data);
             }
         }
+        function cloneNode(old: ASTNode) {
+            let cmpy = new ASTNode(old.operand);
+            cmpy.index = old.index;
+            if(old.noChild()){
+                cmpy.childrenCount = old.childrenCount;
+                cmpy.key = old.key;
+                cmpy.val = old.val;
+                return cmpy;
 
+            }
+            for(let i of old.children){
+                cmpy.children.push(cloneNode(i));
+                cmpy.childrenCount ++;
+            }
+            return cmpy;
+        }
+        function calculateVal(node: ASTNode, line: any){
+            var val = node.val;
+            var key:string = node.key;
+            var bool:boolean = false;
+            switch (node.operand){
+                case 'IS':
+                    if(val.startsWith('*') && val.endsWith('*')){
+                        bool = line[key].indexOf(val.substring(1,val.length - 1));
+                        break;
+                    }else if(val.startsWith('*')){
+                        bool = line[key].indexOf(val.substring(1,val.length));
+                        break;
+                    }else if(val.endsWith('*')){
+                        bool = line[key].indexOf(val.substring(0,val.length - 1));
+                        break;
+                    }else{
+                        bool = (line[key].startsWith(val));
+                        break;
+                    }
+                case 'NOT':
+                    bool = (val != line[key]);
+                    break;
+                case 'LT':
+                    bool = (line[key] < val);
+                    break;
+                case 'GT':
+                    bool = (val < line[key]);
+                    break;
+                case 'EQ':
+                    bool = (val == line[key]);
+                    break;
+                default:
+                    break;
+            }
+            return bool;
+        }
+        function calculateNode(root: ASTNode): boolean{
+            switch (root.operand){
+                case 'AND':
+                    let index = 0;
+                    var curr = true;
+                    while(curr != false && index <= root.index){
+                        curr = root.children[index];
+                        index ++;
+                    }
+                    if(index > root.index && curr != false){
+                        return true;
+                    }
+                    return false;
+                case 'OR':
+                    for(let i of root.children){
+                        if (i == true){
+                            return true;
+                        }
+                    }
+                    return false;
+                default:
+                    return false;
+            }
+        }
+        function traverseHelper(node: ASTNode, line: Object): boolean{
+            if(node.operand == 'IS' || node.operand == 'NOT' || node.operand == 'EQ' || node.operand == 'GT' || node.operand == 'LT' ){
+                return calculateVal(node, line);
+            }
+            else{;
+                return traverse(node, line);
+            }
+        }
+        function traverse(root: ASTNode, line: Object): boolean{
+            for(let i of root.children){
+                root.children[root.index] = traverseHelper(i, line);
+                root.childrenCount --;
+                root.index ++;
+            }
+            if(root.noChild() && root.val == null){
+                return calculateNode(root);
+            }else if(root.noChild() && root.val != null){
+                return calculateVal(root, line);
+            }
+        }
         return new Promise(function(fulfill, reject){
-
+            let pCaught = [];
             try{
-                query = query["WHERE"];
-                //console.log(first(query));
-                //console.log(query[first(query)]);
-                let root = new ASTNode(first(query));
+                let where = query["WHERE"];
+                let root = new ASTNode(first(where));
                 let tree = new Tree(root);
-                recursive(query[first(query)], tree, root);
-                console.log(root);
-
-
+                recursive(where[first(where)], tree, root);
+                try{
+                    let dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
+                let obj = JSON.parse(dataset);
+                for(let i of obj){
+                    let temp = cloneNode(tree.root);
+                    if(traverse(temp, i)){
+                        pCaught.push(i);
+                    }
+                }
+                }catch (err){
+                    resp.code = 424;
+                    resp.body = {error: err};
+                    reject(resp);
+                }
             }catch (err){
+                resp.code = 400;
+                resp.body = {error: err};
                 reject(resp);
             }
+            let colTrim = [];
+            let options = query["OPTIONS"];
+            let cols = options["COLUMNS"];
+            for(let i of pCaught){
+                var obj : { [key:string] : any } = {};
+                for(let k of cols){
+                    obj[k] = i[k];
+                }
+                colTrim.push(obj);
+            }
+            var obj : { [key:string] : any} = {};
+            obj["result"] = colTrim;
+            console.log(obj);
+            resp.body = obj;
+            resp.code = 200;
             fulfill(resp);
         });
     }
