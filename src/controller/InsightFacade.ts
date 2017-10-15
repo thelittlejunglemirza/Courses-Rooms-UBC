@@ -177,7 +177,7 @@ export default class InsightFacade implements IInsightFacade {
             var bool:boolean = false;
             switch (node.operand){
                 case 'IS':
-                    if (!val.isString()){
+                    if (!(typeof (val) === "string")){
                         throw "Invalid IS";
                     }
                     if(val.startsWith('*') && val.endsWith('*')){
@@ -192,24 +192,21 @@ export default class InsightFacade implements IInsightFacade {
                     }else{
                         bool = (line[key].startsWith(val));
                         break;
-                    }
-                case 'NOT':
-                    bool = (val != line[key]);
-                    break;
+                    };
                 case 'LT':
-                    if (!val.isNumber()){
+                    if (!(typeof (val) === "number")){
                         throw "Invalid LT";
                     }
                     bool = (line[key] < val);
                     break;
                 case 'GT':
-                    if (!val.isNumber()){
+                    if (!(typeof (val) === "number")){
                         throw "Invalid GT";
                     }
                     bool = (val < line[key]);
                     break;
                 case 'EQ':
-                    if (!val.isNumber()){
+                    if (!(typeof (val) === "number")){
                         throw "Invalid EQ";
                     }
                     bool = (val == line[key]);
@@ -222,7 +219,7 @@ export default class InsightFacade implements IInsightFacade {
         function calculateNode(root: ASTNode): boolean{
             switch (root.operand){
                 case 'AND':
-                    if(root.noChild()){
+                    if(root.noChild() && root.index == 0){
                         throw "Empty AND"
                     }
                     let index = 0;
@@ -236,7 +233,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     return false;
                 case 'OR':
-                    if(root.noChild()){
+                    if(root.noChild() && root.index == 0){
                         throw "Empty OR"
                     }
                     for(let i of root.children){
@@ -246,7 +243,7 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     return false;
                 case 'NOT':
-                    if(root.noChild() || root.childrenCount > 1){
+                    if((root.noChild() && root.index == 0) || root.childrenCount > 1){
                         throw "Invalid NOT"
                     }
                     return !root.children[0];
@@ -259,7 +256,7 @@ export default class InsightFacade implements IInsightFacade {
             if(node.operand == 'IS' ||  node.operand == 'EQ' || node.operand == 'GT' || node.operand == 'LT' ){
                 return calculateVal(node, line);
             }
-            else{;
+            else{
                 return traverse(node, line);
             }
         }
@@ -295,9 +292,11 @@ export default class InsightFacade implements IInsightFacade {
                     let temp = cloneNode(tree.root);
                     if(traverse(temp, i)){
                         pCaught.push(i);
+
                     }
                 }
             }catch (err){
+                console.log(err);
                 resp.code = 400;
                 resp.body = {error: err};
                 reject(resp);
@@ -323,10 +322,12 @@ export default class InsightFacade implements IInsightFacade {
             }
             var obj : { [key:string] : any} = {};
             obj["result"] = colTrim;
-            //console.log(obj);
-            resp.body = obj;
-            resp.code = 200;
-            fulfill(resp);
+            console.log(obj);
+            if(resp.code == 0){
+                resp.body = obj;
+                resp.code = 200;
+                fulfill(resp);
+            }
         });
     }
 }
