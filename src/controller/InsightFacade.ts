@@ -49,8 +49,8 @@ export default class InsightFacade implements IInsightFacade {
                 }else{                                                                              // If file doesn't exist,
                     resp.code = 204;                                                                // operation will be successful; new id
                 }
-                var stream = fs.createWriteStream("Data_Set/MyDatasetInsight"+id+".json");   // Init a Writable Stream object.
-                stream.on('error', console.error);                                             // On error, log the error.
+                //var stream = fs.createWriteStream("Data_Set/MyDatasetInsight"+id+".json");   // Init a Writable Stream object.
+                //stream.on('error', console.error);                                             // On error, log the error.
 
                 var pArr:Array<Promise<any>> = [];                                                      // Init Promise Array
                 Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {  // Check each key in the Object read from ZIP
@@ -58,7 +58,8 @@ export default class InsightFacade implements IInsightFacade {
                 });
                 Promise.all(pArr).then(function (txtArr) {                                  // Check all String Promises for fulfillment.
                     let flagFoundCourse = false;
-                    stream.write('[' + '\n');                                                   // Write the beginning of the array (open).
+                    fs.writeFileSync("Data_Set/MyDatasetInsight"+id+".json", '[' + '\n');
+                    //stream.write('[' + '\n');                                                   // Write the beginning of the array (open).
                     let sep = "";                                                                       // Init separator.
                     for (let i of txtArr) {                                                             // For each String in Promise Array
                         if (isJsonString(i)) {                                                          // If parseable,
@@ -85,14 +86,16 @@ export default class InsightFacade implements IInsightFacade {
                                 };
                                 let dictstring = JSON.stringify(dict);          // to be able to write it back on disk we will make it
                                                                                 // a string.
-                                stream.write( sep + dictstring );       // Write separator + string to disk
+                                //stream.write( sep + dictstring );       // Write separator + string to disk
+                                fs.appendFileSync("Data_Set/MyDatasetInsight"+id+".json", sep + dictstring);
                                 if (!sep){                                      // Set separator after first write.
                                     sep = ',\n'
                                 }
                             }
                         }
                     }
-                    stream.write('\n]');                                // Close off the array.
+                    //stream.write('\n]');                                // Close off the array.
+                    fs.appendFileSync("Data_Set/MyDatasetInsight"+id+".json", '\n]');
                     if(flagFoundCourse == false){
                         fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
                         throw "the dataset is not valid";
@@ -303,22 +306,23 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function(fulfill, reject){
             let pCaught = [];
             try{
+
                 let where = query["WHERE"];
                 if(Object.keys(where).length == 0) {
-                    throw "Invalid Query"
+                    throw "Invalid Query";
                 }
                 let root = new ASTNode(first(where));
                 let tree = new Tree(root);
                 recursive(where[first(where)], tree, root);
+                let dataset;
                 try {
-                    let dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
+                    dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
                 }catch (err){
-                resp.code = 424;
-                resp.body = {error: err};
-                reject(resp);
-                return;
+                    resp.code = 424;
+                    resp.body = {error: err};
+                    reject(resp);
+                    return;
                 }
-                let dataset = fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
                 let obj = JSON.parse(dataset);
                 for(let i of obj){
                     let temp = cloneNode(tree.root);
@@ -379,7 +383,17 @@ export default class InsightFacade implements IInsightFacade {
                     sort(order, colTrim);
                 }
             }
-            obj["result"] = colTrim;
+            obj["result"] = colTrim
+            /*
+            const content = JSON.stringify(obj);
+            fs.writeFile("test/Querry.json", content, 'utf8', function (err: string) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                console.log("The file was saved!");
+            });
+            */
             resp.body = obj;
             resp.code = 200;
             fulfill(resp);
