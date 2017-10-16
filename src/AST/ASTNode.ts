@@ -31,9 +31,6 @@ export class  ASTNode{
 
     // Checks if the node has no children.
     noChild(){
-        if(this.childrenCount == 0){
-            return true;
-        }
-        return false;
+        return(this.childrenCount == 0);
     }
 }
