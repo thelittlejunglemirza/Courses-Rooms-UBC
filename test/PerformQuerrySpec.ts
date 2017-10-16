@@ -458,7 +458,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-
+    
     it ("removing a dataset" , function () {
         this.timeout(20000);
         return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
@@ -483,5 +483,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+
 
 });

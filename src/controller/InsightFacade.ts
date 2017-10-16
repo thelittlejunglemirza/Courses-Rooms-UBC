@@ -232,7 +232,7 @@ export default class InsightFacade implements IInsightFacade {
                     bool = (val == line[key]);
                     break;
                 default:
-                    break;
+                    throw "Some Error to catch Barracuda";
             }
             return bool;
         }
@@ -295,6 +295,8 @@ export default class InsightFacade implements IInsightFacade {
                 return calculateNode(root);
             }else if(root.noChild() && root.val != null){
                 return calculateVal(root, line);
+            }else{
+                throw "Some Error to pass Barracuda"
             }
         }
         function sort(key: any, arr: Array<any>){
