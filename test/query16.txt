@@ -1,0 +1,9 @@
+{
+  "WHERE":{
+     "IS":{
+        "courses_instructor":"*car"
+      }
+  },
+  "OPTIONS":{
+  }
+}

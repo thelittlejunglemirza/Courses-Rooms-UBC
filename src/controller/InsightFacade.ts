@@ -330,12 +330,21 @@ export default class InsightFacade implements IInsightFacade {
                 return;
             }
             let colTrim = [];
+            if(!("OPTIONS" in query)){
+                resp.code = 400;
+                resp.body = {error: "Invalid OPTIONS"};
+                reject(resp);
+                return;
+            }
             let options = query["OPTIONS"];
             let cols = [];
             try {
+                if(!("COLUMNS" in options)){
+                    throw "Invalid OPTIONS";
+                }
                 cols = options["COLUMNS"];
                 if (cols.length == 0){
-                    throw "Empty columns"
+                    throw "Empty columns";
                 }
                 for (let i of pCaught) {
                     var obj: { [key: string]: any } = {};
@@ -363,16 +372,6 @@ export default class InsightFacade implements IInsightFacade {
                 }
             }
             obj["result"] = colTrim;
-            /*
-            const content = JSON.stringify(obj);
-            fs.writeFile("test/Querry.json", content, 'utf8', function (err: string) {
-                if (err) {
-                    return console.log(err);
-                }
-
-                console.log("The file was saved!");
-            });
-            */
             resp.body = obj;
             resp.code = 200;
             fulfill(resp);
