@@ -53,6 +53,8 @@ describe("PerformQuerrySpec", function () {
     let obj11 = JSON.parse(data11);
     let data12 = fs.readFileSync('test/query12.txt');
     let obj12 = JSON.parse(data12);
+    let data13 = fs.readFileSync('test/query13.txt');
+    let obj13 = JSON.parse(data13);
 
 
 
@@ -215,6 +217,20 @@ describe("PerformQuerrySpec", function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj12).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for a set of specific instructor" , function () {
+        this.timeout(10000);
+
+        return insightFacade.performQuery(obj13).then(function(insightResponse: InsightResponse){
             //Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(200);
         }).catch(function (insightResponse: InsightResponse) {

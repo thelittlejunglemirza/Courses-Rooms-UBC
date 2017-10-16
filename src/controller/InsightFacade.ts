@@ -351,14 +351,16 @@ export default class InsightFacade implements IInsightFacade {
                 return;
             }
             var obj : { [key:string] : any} = {};
-            let order = options["ORDER"];
-            if(cols.indexOf(order) == -1){
-                resp.code = 400;
-                resp.body = {error: "Invalid ORDER"};
-                reject(resp);
-                return;
-            }else{
-                sort(order, colTrim);
+            if("ORDER" in options) {
+                let order = options["ORDER"];
+                if (cols.indexOf(order) == -1) {
+                    resp.code = 400;
+                    resp.body = {error: "Invalid ORDER"};
+                    reject(resp);
+                    return;
+                } else {
+                    sort(order, colTrim);
+                }
             }
             obj["result"] = colTrim;
             /*

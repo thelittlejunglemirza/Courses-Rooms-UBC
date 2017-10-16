@@ -10,15 +10,10 @@
               },
               {
                  "IS":{
-                    "courses_dept":"adhe"
+                    "courses_dept":"*cp*"
                  }
               }
            ]
-        },
-        {
-           "EQ":{
-              "courses_avg":95
-           }
         }
      ]
   },
