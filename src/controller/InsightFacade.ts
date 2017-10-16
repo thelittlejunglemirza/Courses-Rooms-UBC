@@ -241,7 +241,7 @@ export default class InsightFacade implements IInsightFacade {
             switch (root.operand){
                 case 'AND':
                     if(root.noChild() && root.index == 0){
-                        throw "Empty AND"
+                        throw "Empty AND";
                     }
                     let index = 0;
                     var curr = true;
@@ -282,7 +282,7 @@ export default class InsightFacade implements IInsightFacade {
                 return traverse(node, line);
             }
             else{
-                throw "Invalid query logic"
+                throw "Invalid query logic";
             }
         }
         function traverse(root: ASTNode, line: Object): boolean{
@@ -296,7 +296,7 @@ export default class InsightFacade implements IInsightFacade {
             }else if(root.noChild() && root.val != null){
                 return calculateVal(root, line);
             }else{
-                throw "Some Error to pass Barracuda"
+                throw "Some Error to pass Barracuda";
             }
         }
         function sort(key: any, arr: Array<any>){
@@ -361,7 +361,7 @@ export default class InsightFacade implements IInsightFacade {
                     var obj: { [key: string]: any } = {};
                     for (let k of cols) {
                         if(legalKeys.indexOf(k) == -1){
-                            throw "Invalid COLUMN"
+                            throw "Invalid COLUMN";
                         }
                         obj[k] = i[k];
                     }
