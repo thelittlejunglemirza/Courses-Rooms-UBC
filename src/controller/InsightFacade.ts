@@ -9,6 +9,9 @@ import {ASTNode} from "../AST/ASTNode";
 
 var JSZip = require("jszip");
 var fs = require('fs');
+var legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
+                                "courses_instructor", "courses_title", "courses_pass",
+                                "courses_fail", "courses_audit", "courses_uuid"];
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -96,14 +99,12 @@ export default class InsightFacade implements IInsightFacade {
                     }
                     fulfill(resp);                                              // Finally, fulfill.
                 }).catch(function (err) {
-                    console.log('1');                                           // Log-tracking(1).
                     console.log(err);                                           // Log error.
                     resp.code = 400;                                            // Update with error code.
                     resp.body = {error: err};                                          // Update with error body.
                     reject(resp);                                               // Reject the Promise.
                 });
             }).catch(function (err: string) {                                   // If ZIP is not valid
-                console.log('2');                                               // Log-tracking(2).
                 console.log(err);                                               // Log error.
                 resp.code = 400;                                                // Update with error code.
                 resp.body = {error: err};                                              // Update with error body.
@@ -185,6 +186,9 @@ export default class InsightFacade implements IInsightFacade {
         function calculateVal(node: ASTNode, line: any){
             var val = node.val;
             var key:string = node.key;
+            if(legalKeys.indexOf(key) == -1){
+                throw "Invalid Key";
+            }
             var bool:boolean = false;
             switch (node.operand){
                 case 'IS':
@@ -192,13 +196,8 @@ export default class InsightFacade implements IInsightFacade {
                         throw "Invalid IS";
                     }
                     if(val.startsWith('*') && val.endsWith('*')){
-                        if(!(line[key].endsWith(val.substring(1,val.length - 1)))){
-                            bool=line[key].startsWith(val.substring(1,val.length - 1));
-                            break;
-                        }else {
-                            bool = line[key].endsWith(val.substring(1, val.length - 1));
-                            break;
-                        }
+                        bool=line[key].includes(val.substring(1,val.length - 1));
+                        break;
                     }else if(val.startsWith('*')){
                         bool = line[key].endsWith(val.substring(1,val.length));
                         break;
@@ -274,8 +273,11 @@ export default class InsightFacade implements IInsightFacade {
             if(node.operand == 'IS' ||  node.operand == 'EQ' || node.operand == 'GT' || node.operand == 'LT' ){
                 return calculateVal(node, line);
             }
-            else{
+            else if(node.operand == 'AND' ||  node.operand == 'OR' || node.operand == 'NOT' ){
                 return traverse(node, line);
+            }
+            else{
+                throw "Invalid query logic"
             }
         }
         function traverse(root: ASTNode, line: Object): boolean{
@@ -369,7 +371,6 @@ export default class InsightFacade implements IInsightFacade {
                 console.log("The file was saved!");
             });
             */
-            //console.log(obj['result']);
             resp.body = obj;
             resp.code = 200;
             fulfill(resp);
