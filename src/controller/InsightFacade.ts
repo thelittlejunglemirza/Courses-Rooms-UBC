@@ -156,8 +156,10 @@ export default class InsightFacade implements IInsightFacade {
                 }
             }else if(curr.operand == 'NOT'){
                 let node = new ASTNode(first(data));
-                curr.pushChild(node);
-                recursive(data[first(data)], tree, node);
+                if(Object.keys(data).length != 0) {
+                    curr.pushChild(node);
+                    recursive(data[first(data)], tree, node);
+                }
             }
             else{
                 curr.setValue(data);                                                        // Otherwise, just set the current node's value
@@ -349,6 +351,9 @@ export default class InsightFacade implements IInsightFacade {
                 for (let i of pCaught) {
                     var obj: { [key: string]: any } = {};
                     for (let k of cols) {
+                        if(legalKeys.indexOf(k) == -1){
+                            throw "Invalid COLUMN"
+                        }
                         obj[k] = i[k];
                     }
                     colTrim.push(obj);

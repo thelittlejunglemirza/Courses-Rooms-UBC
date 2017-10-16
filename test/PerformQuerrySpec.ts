@@ -300,6 +300,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+
     it("Erroneous Query Key, bad EQ" , function () {
         this.timeout(10000);
         let data18 = fs.readFileSync('test/query18.txt');
@@ -325,6 +326,111 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+
+    it("Erroneous Query Key, bad AND" , function () {
+        this.timeout(10000);
+        let data20 = fs.readFileSync('test/query20.txt');
+        let obj20 = JSON.parse(data20);
+        return insightFacade.performQuery(obj20).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("Erroneous Query Key, no WHERE" , function () {
+        this.timeout(10000);
+        let data21 = fs.readFileSync('test/query21.txt');
+        let obj21 = JSON.parse(data21);
+        return insightFacade.performQuery(obj21).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("Erroneous Query Key, empty NOT" , function () {
+        this.timeout(10000);
+        let data22 = fs.readFileSync('test/query22.txt');
+        let obj22 = JSON.parse(data22);
+        return insightFacade.performQuery(obj22).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("Erroneous Query Key, empty NOT" , function () {
+        this.timeout(10000);
+        let data22 = fs.readFileSync('test/query22.txt');
+        let obj22 = JSON.parse(data22);
+        return insightFacade.performQuery(obj22).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("Erroneous Query Key, Invalid IS" , function () {
+        this.timeout(10000);
+        let data23 = fs.readFileSync('test/query23.txt');
+        let obj23 = JSON.parse(data23);
+        return insightFacade.performQuery(obj23).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("Erroneous Query Key, Invalid LT" , function () {
+        this.timeout(10000);
+        let data24 = fs.readFileSync('test/query24.txt');
+        let obj24 = JSON.parse(data24);
+        return insightFacade.performQuery(obj24).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("Erroneous Query Key, Invalid GT" , function () {
+        this.timeout(10000);
+        let data25 = fs.readFileSync('test/query25.txt');
+        let obj25 = JSON.parse(data25);
+        return insightFacade.performQuery(obj25).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Erroneous Query Key, Invalid COLUMNS" , function () {
+        this.timeout(10000);
+        let data26 = fs.readFileSync('test/queryForInvalidColumn.txt');
+        let obj26 = JSON.parse(data26);
+        return insightFacade.performQuery(obj26).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
     it ("removing a dataset" , function () {
         this.timeout(20000);
         return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
@@ -338,7 +444,7 @@ describe("PerformQuerrySpec", function () {
 
     });
 
-    it("Erroneous PQ, nodataset" , function () {
+    it("Erroneous PQ, no dataset" , function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(obj15).then(function(insightResponse: InsightResponse){
@@ -349,4 +455,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+
+
 });
