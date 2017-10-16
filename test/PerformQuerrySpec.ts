@@ -30,8 +30,8 @@ describe("PerformQuerrySpec", function () {
     let data2 = fs.readFileSync('test/querry2.txt');
     let obj2 = JSON.parse(data2);
 
-    // let data3 = fs.readFileSync('test/querry3.txt');
-    // let obj3 = JSON.parse(data3);
+    let data3_1 = fs.readFileSync('test/querry3.txt');
+    let obj3_1 = JSON.parse(data3_1);
 
     let data3 = fs.readFileSync('test/query3.txt');
     let obj3 = JSON.parse(data3);
@@ -79,10 +79,10 @@ describe("PerformQuerrySpec", function () {
 
     });
 
-    /*
+
     it("test if perform query all courses with same department" , function () {
         this.timeout(10000);
-        return insightFacade.performQuery(obj3).then(function(insightResponse: InsightResponse){
+        return insightFacade.performQuery(obj3_1).then(function(insightResponse: InsightResponse){
             //Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(200);
         }).catch(function (insightResponse: InsightResponse) {
@@ -92,7 +92,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-    */
 
 
     it("Empty AND returns an error code of 400." , function () {
@@ -193,4 +192,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+
+
 });
