@@ -205,7 +205,7 @@ export default class InsightFacade implements IInsightFacade {
                         bool = line[key].startsWith(val.substring(0,val.length - 1));
                         break;
                     }else{
-                        bool = (line[key].startsWith(val));
+                        bool = (line[key] === val);
                         break;
                     };
                 case 'LT':
@@ -361,7 +361,7 @@ export default class InsightFacade implements IInsightFacade {
                 sort(order, colTrim);
             }
             obj["result"] = colTrim;
-            /*
+
             const content = JSON.stringify(obj);
             fs.writeFile("test/Querry.json", content, 'utf8', function (err: string) {
                 if (err) {
@@ -370,7 +370,7 @@ export default class InsightFacade implements IInsightFacade {
 
                 console.log("The file was saved!");
             });
-            */
+
             resp.body = obj;
             resp.code = 200;
             fulfill(resp);
