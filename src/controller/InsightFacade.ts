@@ -267,7 +267,7 @@ export default class InsightFacade implements IInsightFacade {
                     return !root.children[0];
 
                 default:
-                    return false;
+                    throw "Invalid Query";
             }
         }
 
@@ -304,6 +304,9 @@ export default class InsightFacade implements IInsightFacade {
             let pCaught = [];
             try{
                 let where = query["WHERE"];
+                if(Object.keys(where).length == 0) {
+                    throw "Invalid Query"
+                }
                 let root = new ASTNode(first(where));
                 let tree = new Tree(root);
                 recursive(where[first(where)], tree, root);
