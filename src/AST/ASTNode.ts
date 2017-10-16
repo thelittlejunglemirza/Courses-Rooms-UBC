@@ -7,8 +7,8 @@ export class  ASTNode{
     public operand: string;
     public key: string;
     public val: any;
-    constructor (key:string){
-        this.operand = key;
+    constructor (operand:string){
+        this.operand = operand;
         this.children = [];
         this.key = null;
         this.val = null;

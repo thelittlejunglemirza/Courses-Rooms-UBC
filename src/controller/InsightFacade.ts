@@ -153,7 +153,12 @@ export default class InsightFacade implements IInsightFacade {
                     curr.pushChild(node);                                                   // Push into the list of children of the current node
                     recursive(i[first(i)], tree, node);                                     // Recursive call
                 }
-            }else{
+            }else if(curr.operand == 'NOT'){
+                let node = new ASTNode(first(data));
+                curr.pushChild(node);
+                recursive(data[first(data)], tree, node);
+            }
+            else{
                 curr.setValue(data);                                                        // Otherwise, just set the current node's value
             }
         }
@@ -190,9 +195,10 @@ export default class InsightFacade implements IInsightFacade {
                         if(!(line[key].endsWith(val.substring(1,val.length - 1)))){
                             bool=line[key].startsWith(val.substring(1,val.length - 1));
                             break;
+                        }else {
+                            bool = line[key].endsWith(val.substring(1, val.length - 1));
+                            break;
                         }
-                        bool = line[key].endsWith(val.substring(1,val.length));
-                        break;
                     }else if(val.startsWith('*')){
                         bool = line[key].endsWith(val.substring(1,val.length));
                         break;
