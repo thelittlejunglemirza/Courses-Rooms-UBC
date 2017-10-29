@@ -483,4 +483,5 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+
 });
