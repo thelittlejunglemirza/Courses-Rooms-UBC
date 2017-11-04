@@ -1,4 +1,10 @@
+
+
+import {Building, Room} from "../AST/Building";
+
+
 export default class FileOperator{
+    public c = 0;
     private fs = require('fs');
 
     // create the directory if it doesnt already exist
@@ -13,7 +19,7 @@ export default class FileOperator{
         if(id === "courses"){
             this.readAndWriteCourses(txtArr, id);
         }else if(id === "rooms"){
-
+            this.readAndWriteRooms(txtArr, id);
         }
         else{
             this.readAndWriteCourses(txtArr, id);
@@ -60,6 +66,174 @@ export default class FileOperator{
         }
     }
 
+    getIndexTable(child: any): NodeList{
+        if(child.nodeName === "tbody"){
+            return child.childNodes;
+        }else{
+            if(!(child.childNodes)){
+                return null;
+            }
+            for(let i of child.childNodes){
+                let ret = this.getIndexTable(i);
+                if(ret){
+                    return ret;
+                }
+            }
+        }
+        return null;
+    }
+
+    fetchBuildings(table: any): Array<Building>{
+        let buildings: Array<Building> =[];
+
+        for(let r of table){
+            if(r.nodeName === "tr"){
+                var row = r;
+                var bldg = new Building;
+                bldg.shortname = row.childNodes[3].childNodes[0].value.trim();
+                bldg.fullname = row.childNodes[5].childNodes[1].childNodes[0].value.trim();
+                bldg.address = row.childNodes[7].childNodes[0].value.trim();
+                buildings.push(bldg);
+
+            }
+        }
+        return buildings;
+    }
+
+    isInBuildings(document: any, fullnames: Array<string>): boolean{
+        for(var f of fullnames){
+            if(document.value === f){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    getBuilding(document: any, fullnames: Array<string>):string{
+        if(document.nodeName === "div"){
+            for(let a of document.attrs){
+                if(a.value === "building-info" && this.isInBuildings(document.childNodes[1].childNodes[0].childNodes[0],fullnames)){
+                    let bldg:string = document.childNodes[1].childNodes[0].childNodes[0].value;
+                    return bldg;
+                }
+            }
+
+       }
+       if(document.childNodes){
+           for(let c of document.childNodes){
+               let ret = this.getBuilding(c, fullnames);
+               if(ret){
+                   return ret;
+               }
+           }
+       }
+       return null;
+    }
+
+    addRooms(document: any, buildings: Array<Building>, bldg: string){
+        let table:any = this.getIndexTable(document);
+        if(table == null){
+            return;
+        }
+        for(let r of table){
+            if(r.nodeName === "tr"){
+                var row = r;
+                var room = new Room;
+                room.room_number = row.childNodes[1].childNodes[1].childNodes[0].value.trim();
+                room.room_seats = parseInt(row.childNodes[3].childNodes[0].value.trim());
+                room.room_furniture = row.childNodes[5].childNodes[0].value.trim();
+                room.room_type = row.childNodes[7].childNodes[0].value.trim();
+                room.room_href = row.childNodes[9].childNodes[1].attrs[0].value;
+
+                for(let b of buildings){
+                    if(b.fullname === bldg){
+                        room.room_name = b.shortname + "_" + room.room_number;
+                        b.addRoom(room);
+                        break;
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    addToDataset(buildings: Array<Building>, id: string){
+        let flagFoundRoom = false;
+        this.fs.writeFileSync("Data_Set/MyRoomsInsight"+id+".json", '[' + '\n');
+        let sep = "";
+        for(let b of buildings){
+            if(b.has_rooms){
+                if(flagFoundRoom == false){
+                    flagFoundRoom = true;
+                }
+                for(let r of b.rooms){
+                    let dict = {
+                        "rooms_fullname": b.fullname,
+                        "rooms_shortname": b.shortname,
+                        "rooms_number": r.room_number,
+                        "rooms_name": r.room_name,
+                        "rooms_address": b.address,
+                        "rooms_lat": 0,
+                        "rooms_lon": 0,
+                        "rooms_seats": r.room_seats,
+                        "rooms_type": r.room_type,
+                        "rooms_furniture": r.room_furniture,
+                        "rooms_href": r.room_href
+                    };
+                    let dictstring = JSON.stringify(dict);
+
+                    this.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", sep + dictstring);
+                    if (!sep){
+                        sep = ',\n'
+                    }
+                }
+            }
+        }
+        this.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", '\n]');
+        if(flagFoundRoom == false){
+            this.fs.unlinkSync("./Data_Set/MyRoomsInsight"+id+".json");
+            throw "the dataset is not valid";
+        }
+    }
+
+    readAndWriteRooms(txtArr: Array<string>, id: string){
+        const parse5 = require('parse5');
+        try{
+
+            let index = parse5.parse(txtArr[txtArr.length - 1]);
+            let table: any;
+            for(let c of index.childNodes){
+                table = this.getIndexTable(c);
+                if(table){
+                    break;
+                }
+            }
+            let buildings: Array<Building> =[];
+            buildings = this.fetchBuildings(table);
+
+            let fullnames: Array<string> = [];
+            for(var b of buildings){
+                fullnames.push(b.fullname);
+            }
+
+            for(var f of txtArr) {
+                let document = parse5.parse(f);
+                let bldg = this.getBuilding(document, fullnames);
+                if (bldg) {
+                    this.addRooms(document, buildings, bldg);
+                }
+            }
+
+            this.addToDataset(buildings, id);
+
+
+        }catch (err){
+            console.log(err);
+            throw err;
+        }
+
+    }
+
     // check if string is JSON
     isJsonString(str: string): boolean{
         try {
@@ -81,11 +255,19 @@ export default class FileOperator{
     }
 
     // return the string associated with dataset if exists
-    getDataset(): string{
-        try{
-            return this.fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
-        }catch(err) {
-            throw "No Dataset"
+    getDataset(id: string): string{
+        if(id === "courses"){
+            try{
+                return this.fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
+            }catch(err) {
+                throw "No Dataset"
+            }
+        }else if(id === "rooms"){
+            try{
+                return this.fs.readFileSync("./Data_Set/MyRoomsInsightrooms.json");
+            }catch(err) {
+                throw "No Dataset"
+            }
         }
     }
 

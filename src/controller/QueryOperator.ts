@@ -1,9 +1,11 @@
 import {ASTNode} from "../AST/ASTNode";
 import {Tree} from "../AST/Tree";
 
-var legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
-    "courses_instructor", "courses_title", "courses_pass",
-    "courses_fail", "courses_audit", "courses_uuid"];
+ var legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
+     "courses_instructor", "courses_title", "courses_pass",
+     "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
+     "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
+     "rooms_href"];
 
 // Returns the first item in an Object.
 function first(obj: Object) {
@@ -21,7 +23,7 @@ function sort(key: any, arr: Array<any>){
 export default class QueryOperator{
 
     // Forms a tree recursively.
-      static recursive(data: any, tree: Tree, curr: ASTNode){
+    static recursive(data: any, tree: Tree, curr: ASTNode){
         if(Array.isArray(data)){                                                        // If it's an array..
             for(let i of data){                                                         // Cycle through it
                 let node = new ASTNode(first(i));                                       // Create new node from the first item
@@ -98,6 +100,19 @@ export default class QueryOperator{
             } else {
                 sort(order, colTrim);
             }
+        }
+    }
+
+    static validateQuerry(query: any): string{
+        let txt = JSON.stringify(query);
+        if(txt.indexOf("courses_") !== -1 && txt.indexOf("rooms_") !== -1){
+            return null;
+        }else if(txt.indexOf("courses_") !== -1){
+            return "courses"
+        }else if(txt.indexOf("rooms_") !== -1){
+            return "rooms"
+        }else{
+            return null;
         }
     }
 }

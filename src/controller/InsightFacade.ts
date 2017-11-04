@@ -25,6 +25,7 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
                 resp.setCode(navigator.checkDatasetExists(id));
+                //navigator.readAndWrite(zip);
                 var pArr:Array<Promise<any>> = [];
                 Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {
                     pArr.push(zip.files[relativePath].async("string"));
@@ -68,6 +69,12 @@ export default class InsightFacade implements IInsightFacade {
         var resp: InsightResponseController = new InsightResponseController();
         return new Promise(function(fulfill, reject){
             let eCaught = [];
+            let id = QueryOperator.validateQuerry(query);
+            if(id != "courses" && id != "rooms"){
+                resp.setError(400, "Invalid Query");
+                reject(resp.getResponse());
+                return;
+            }
             let options = query["OPTIONS"];
             let colTrim: Array<any> = [];
             let cols: Array<string> = [];
@@ -80,10 +87,9 @@ export default class InsightFacade implements IInsightFacade {
                 }
 
                 let root = QueryOperator.processWhere(where);
-                let dataset = navigator.getDataset();
-                let obj = JSON.parse(dataset);
-                eCaught = QueryOperator.extractData(obj, root)
-
+                let dataset = navigator.getDataset(id);
+                let obj = JSON.parse(dataset)
+                eCaught = QueryOperator.extractData(obj, root);
                 if(!("OPTIONS" in query)){
                     throw "Invalid OPTIONS";
                 }
@@ -108,7 +114,7 @@ export default class InsightFacade implements IInsightFacade {
 
             res["result"] = colTrim
             resp.setFulfill(200, res);
-            navigator.writeResultToFile(res);
+            //navigator.writeResultToFile(res);
             fulfill(resp.getResponse());
         });
     }

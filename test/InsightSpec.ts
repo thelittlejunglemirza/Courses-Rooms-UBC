@@ -40,7 +40,7 @@ describe("InsightSpec", function () {
 
     it ("adding the dataset for the first time to make sure that it creates the json file with code 204" , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/1.zip');
+        let data = fs.readFileSync('test/Datasets/1.zip');
         return insightFacade.addDataset("courses", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);
@@ -54,7 +54,7 @@ describe("InsightSpec", function () {
 
     it ("adding a dataset that is much shorter, expecting code 204" , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/2.zip');
+        let data = fs.readFileSync('test/Datasets/2.zip');
         return insightFacade.addDataset("2", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);
@@ -68,7 +68,7 @@ describe("InsightSpec", function () {
 
     it ("Adding a valid ZIP with no data at all should return an error code of 400." , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/nocourses.zip');
+        let data = fs.readFileSync('test/Datasets/nocourses.zip');
         return insightFacade.addDataset("10", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect.fail();
@@ -81,7 +81,7 @@ describe("InsightSpec", function () {
 
     it ("adding a valid zip dataset that has no courses" , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/in1.zip');
+        let data = fs.readFileSync('test/Datasets/in1.zip');
         return insightFacade.addDataset("3", data.toString('base64')).then(function(insightResponse: InsightResponse){
             expect.fail();
         }).catch(function (insightResponse: InsightResponse) {
@@ -96,7 +96,7 @@ describe("InsightSpec", function () {
     it ("this is a dataset added for the next test!" , function () {
         this.timeout(10000);
         let fs   = require('fs');
-        let data = fs.readFileSync('test/1.zip');
+        let data = fs.readFileSync('test/Datasets/1.zip');
         return insightFacade.addDataset("4", data.toString('base64')).then(function(insightResponse: InsightResponse){
             expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {
@@ -108,7 +108,7 @@ describe("InsightSpec", function () {
     it ("adding a second dataset that is much longer, expecting code 201, and correct overwrite of existing dataset" , function () {
         this.timeout(10000);
         let fs   = require('fs');
-        let data = fs.readFileSync('test/2.zip');
+        let data = fs.readFileSync('test/Datasets/2.zip');
         return insightFacade.addDataset("4", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(201);
@@ -123,7 +123,7 @@ describe("InsightSpec", function () {
 
     it ("adding an invalid zip file should fail with error code 400" , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/notzip.rtf');
+        let data = fs.readFileSync('test/Datasets/notzip.rtf');
         return insightFacade.addDataset("5", data.toString('base64')).then(function(insightResponse: InsightResponse){
             expect.fail();
         }).catch(function (insightResponse: InsightResponse) {
@@ -137,7 +137,7 @@ describe("InsightSpec", function () {
 
     it ("Adding an invalid ZIP should return error code 400." , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/notazip');
+        let data = fs.readFileSync('test/Datasets/notazip');
         return insightFacade.addDataset("6", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect.fail();
@@ -150,7 +150,7 @@ describe("InsightSpec", function () {
 
     it ("Adding a valid ZIP with invalid data should return error code 400." , function () {
         this.timeout(10000);
-        let data = fs.readFileSync('test/invalid.zip');                             // 1 file, {] <- invalid JSON
+        let data = fs.readFileSync('test/Datasets/invalid.zip');                             // 1 file, {] <- invalid JSON
         return insightFacade.addDataset("7", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect.fail();

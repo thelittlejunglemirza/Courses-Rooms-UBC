@@ -1,0 +1,28 @@
+{
+  "WHERE":{
+     "AND" : [
+
+     {
+     "AND": [ {"IS": {
+                       "courses_instructor": "*shona*"
+                       }}, {"GT": {
+                                                   "courses_avg":70
+                                                   }}
+     ]
+        }
+     , {
+        "IS": { "courses_dept" : "biol"}
+     }
+     ]
+
+  },
+  "OPTIONS":{
+     "COLUMNS":[
+        "courses_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_instructor"
+     ],
+     "ORDER":"courses_avg"
+  }
+}

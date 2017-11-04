@@ -25,41 +25,41 @@ describe("PerformQuerrySpec", function () {
         insightFacade = null;
     });
 
-    let data = fs.readFileSync('test/querry.txt');
+    let data = fs.readFileSync('test/Queries/querry.txt');
     let obj = JSON.parse(data);
-    let data2 = fs.readFileSync('test/querry2.txt');
+    let data2 = fs.readFileSync('test/Queries/querry2.txt');
     let obj2 = JSON.parse(data2);
 
-    let data3_1 = fs.readFileSync('test/querry3.txt');
+    let data3_1 = fs.readFileSync('test/Queries/querry3.txt');
     let obj3_1 = JSON.parse(data3_1);
 
-    let data3 = fs.readFileSync('test/query3.txt');
+    let data3 = fs.readFileSync('test/Queries/query3.txt');
     let obj3 = JSON.parse(data3);
-    let data4 = fs.readFileSync('test/query4.txt');
+    let data4 = fs.readFileSync('test/Queries/query4.txt');
     let obj4 = JSON.parse(data4);
-    let data5 = fs.readFileSync('test/query5.txt');
+    let data5 = fs.readFileSync('test/Queries/query5.txt');
     let obj5 = JSON.parse(data5);
-    let data6 = fs.readFileSync('test/query6.txt');
+    let data6 = fs.readFileSync('test/Queries/query6.txt');
     let obj6 = JSON.parse(data6);
-    let data7 = fs.readFileSync('test/query7.txt');
+    let data7 = fs.readFileSync('test/Queries/query7.txt');
     let obj7 = JSON.parse(data7);
-    let data8 = fs.readFileSync('test/query8.txt');
+    let data8 = fs.readFileSync('test/Queries/query8.txt');
     let obj8 = JSON.parse(data8);
-    let data9 = fs.readFileSync('test/query9.txt');
+    let data9 = fs.readFileSync('test/Queries/query9.txt');
     let obj9 = JSON.parse(data9);
-    let data10 = fs.readFileSync('test/query10.txt');
+    let data10 = fs.readFileSync('test/Queries/query10.txt');
     let obj10 = JSON.parse(data10);
-    let data11 = fs.readFileSync('test/query11.txt');
+    let data11 = fs.readFileSync('test/Queries/query11.txt');
     let obj11 = JSON.parse(data11);
-    let data12 = fs.readFileSync('test/query12.txt');
+    let data12 = fs.readFileSync('test/Queries/query12.txt');
     let obj12 = JSON.parse(data12);
-    let data13 = fs.readFileSync('test/query13.txt');
+    let data13 = fs.readFileSync('test/Queries/query13.txt');
     let obj13 = JSON.parse(data13);
-    let data14 = fs.readFileSync('test/query14.txt');
+    let data14 = fs.readFileSync('test/Queries/query14.txt');
     let obj14 = JSON.parse(data14);
-    let data15 = fs.readFileSync('test/query15.txt');
+    let data15 = fs.readFileSync('test/Queries/query15.txt');
     let obj15 = JSON.parse(data15);
-    let data16 = fs.readFileSync('test/query16.txt');
+    let data16 = fs.readFileSync('test/Queries/query16.txt');
     let obj16 = JSON.parse(data16);
 
 
@@ -290,7 +290,7 @@ describe("PerformQuerrySpec", function () {
 
     it("test if perform query to check for EQ" , function () {
         this.timeout(10000);
-        let data17 = fs.readFileSync('test/query17.txt');
+        let data17 = fs.readFileSync('test/Queries/query17.txt');
         let obj17 = JSON.parse(data17);
         return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
             //Log.test('Code: ' + insightResponse.code);
@@ -305,7 +305,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, bad EQ" , function () {
         this.timeout(10000);
-        let data18 = fs.readFileSync('test/query18.txt');
+        let data18 = fs.readFileSync('test/Queries/query18.txt');
         let obj18 = JSON.parse(data18);
         return insightFacade.performQuery(obj18).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -318,7 +318,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, Invalid Options" , function () {
         this.timeout(10000);
-        let data19 = fs.readFileSync('test/query19.txt');
+        let data19 = fs.readFileSync('test/Queries/query19.txt');
         let obj19 = JSON.parse(data19);
         return insightFacade.performQuery(obj19).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -331,7 +331,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, bad AND" , function () {
         this.timeout(10000);
-        let data20 = fs.readFileSync('test/query20.txt');
+        let data20 = fs.readFileSync('test/Queries/query20.txt');
         let obj20 = JSON.parse(data20);
         return insightFacade.performQuery(obj20).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -344,7 +344,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, no WHERE" , function () {
         this.timeout(10000);
-        let data21 = fs.readFileSync('test/query21.txt');
+        let data21 = fs.readFileSync('test/Queries/query21.txt');
         let obj21 = JSON.parse(data21);
         return insightFacade.performQuery(obj21).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -357,7 +357,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, empty NOT" , function () {
         this.timeout(10000);
-        let data22 = fs.readFileSync('test/query22.txt');
+        let data22 = fs.readFileSync('test/Queries/query22.txt');
         let obj22 = JSON.parse(data22);
         return insightFacade.performQuery(obj22).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -370,7 +370,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, empty NOT" , function () {
         this.timeout(10000);
-        let data22 = fs.readFileSync('test/query22.txt');
+        let data22 = fs.readFileSync('test/Queries/query22.txt');
         let obj22 = JSON.parse(data22);
         return insightFacade.performQuery(obj22).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -383,7 +383,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, Invalid IS" , function () {
         this.timeout(10000);
-        let data23 = fs.readFileSync('test/query23.txt');
+        let data23 = fs.readFileSync('test/Queries/query23.txt');
         let obj23 = JSON.parse(data23);
         return insightFacade.performQuery(obj23).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -396,7 +396,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, Invalid LT" , function () {
         this.timeout(10000);
-        let data24 = fs.readFileSync('test/query24.txt');
+        let data24 = fs.readFileSync('test/Queries/query24.txt');
         let obj24 = JSON.parse(data24);
         return insightFacade.performQuery(obj24).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -409,7 +409,7 @@ describe("PerformQuerrySpec", function () {
 
     it("Erroneous Query Key, Invalid GT" , function () {
         this.timeout(10000);
-        let data25 = fs.readFileSync('test/query25.txt');
+        let data25 = fs.readFileSync('test/Queries/query25.txt');
         let obj25 = JSON.parse(data25);
         return insightFacade.performQuery(obj25).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -422,7 +422,7 @@ describe("PerformQuerrySpec", function () {
 
     it ("Erroneous Query Key, Invalid COLUMNS" , function () {
         this.timeout(10000);
-        let data26 = fs.readFileSync('test/queryForInvalidColumn.txt');
+        let data26 = fs.readFileSync('test/Queries/queryForInvalidColumn.txt');
         let obj26 = JSON.parse(data26);
         return insightFacade.performQuery(obj26).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -435,7 +435,7 @@ describe("PerformQuerrySpec", function () {
 
     it ("Erroneous Query Key, Empty WHERE" , function () {
         this.timeout(10000);
-        let data26 = fs.readFileSync('test/query26.txt');
+        let data26 = fs.readFileSync('test/Queries/query26.txt');
         let obj26 = JSON.parse(data26);
         return insightFacade.performQuery(obj26).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -448,7 +448,7 @@ describe("PerformQuerrySpec", function () {
 
     it ("Erroneous Query Key, Empty IS" , function () {
         this.timeout(10000);
-        let data27 = fs.readFileSync('test/query27.txt');
+        let data27 = fs.readFileSync('test/Queries/query27.txt');
         let obj27 = JSON.parse(data27);
         return insightFacade.performQuery(obj27).then(function(insightResponse: InsightResponse){
             expect.fail();
@@ -458,7 +458,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-
+    /*
     it ("removing a dataset" , function () {
         this.timeout(20000);
         return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
@@ -483,5 +483,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+    */
 
 });

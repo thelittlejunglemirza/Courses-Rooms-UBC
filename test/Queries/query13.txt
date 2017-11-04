@@ -1,0 +1,15 @@
+{
+  "WHERE":{
+     "IS":{
+        "courses_instructor":"*car"
+      }
+  },
+  "OPTIONS":{
+     "COLUMNS":[
+        "courses_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_instructor"
+     ]
+  }
+}

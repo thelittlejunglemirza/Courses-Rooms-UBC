@@ -1,0 +1,14 @@
+{
+  "WHERE":{
+     "IS":{
+		"courses_instructor":"*judi*"
+	 }
+  },
+  "OPTIONS":{
+     "COLUMNS":[
+        "courses_dept",
+        "courses_id"
+     ],
+     "ORDER":"courses_id"
+  }
+}
