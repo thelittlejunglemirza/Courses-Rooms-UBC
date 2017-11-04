@@ -39,6 +39,12 @@ export default class FileOperator{
                     flagFoundCourse = true;
                 }
                 for (let j of obj) {
+                    let course_year: number;
+                    if(j["Section"] === "overall"){
+                        course_year = 1900;
+                    }else{
+                        course_year = j["Year"];
+                    }
                     let dict = {
                         "courses_dept": j['Subject'],
                         "courses_id": j['Course'],
@@ -48,7 +54,8 @@ export default class FileOperator{
                         "courses_pass": j['Pass'],
                         "courses_fail": j['Fail'],
                         "courses_audit": j['Audit'],
-                        "courses_uuid": j['id'].toString()
+                        "courses_uuid": j['id'].toString(),
+                        "courses_year": course_year
                     };
                     let dictstring = JSON.stringify(dict);
 

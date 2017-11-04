@@ -2,7 +2,7 @@ var legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
     "courses_instructor", "courses_title", "courses_pass",
     "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
     "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
-    "rooms_href"];
+    "rooms_href", "courses_year"];
 
 export class  ASTNode{
     public children: Array<any>;
