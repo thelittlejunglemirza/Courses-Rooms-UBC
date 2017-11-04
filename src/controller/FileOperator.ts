@@ -43,7 +43,7 @@ export default class FileOperator{
                     if(j["Section"] === "overall"){
                         course_year = 1900;
                     }else{
-                        course_year = j["Year"];
+                        course_year = parseInt(j["Year"]);
                     }
                     let dict = {
                         "courses_dept": j['Subject'],
