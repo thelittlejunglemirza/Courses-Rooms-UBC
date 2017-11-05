@@ -1,21 +1,21 @@
 
 
 import {Building, Room} from "../AST/Building";
-
-
+import GeoFacade from "./GeoFacade";
+import {GeoResponse} from "./IGeoFacade";
 export default class FileOperator{
     public c = 0;
     private fs = require('fs');
 
     // create the directory if it doesnt already exist
     makeDirectory(str: string){
-        if (!this.fs.existsSync(str)) {                                          // Create directory if not found.
+        if (!this.fs.existsSync(str)) {
             this.fs.mkdirSync(str)
         }
     }
 
     // read and write the dataset
-    readAndWrite(txtArr: Array<string>, id:string){    ///!!!!!
+    readAndWrite(txtArr: Array<string>, id:string){    //!!!!!
         if(id === "courses"){
             this.readAndWriteCourses(txtArr, id);
         }else if(id === "rooms"){
@@ -95,8 +95,8 @@ export default class FileOperator{
 
         for(let r of table){
             if(r.nodeName === "tr"){
-                var row = r;
-                var bldg = new Building;
+                let row = r;
+                let bldg = new Building;
                 bldg.shortname = row.childNodes[3].childNodes[0].value.trim();
                 bldg.fullname = row.childNodes[5].childNodes[1].childNodes[0].value.trim();
                 bldg.address = row.childNodes[7].childNodes[0].value.trim();
@@ -108,7 +108,7 @@ export default class FileOperator{
     }
 
     isInBuildings(document: any, fullnames: Array<string>): boolean{
-        for(var f of fullnames){
+        for(let f of fullnames){
             if(document.value === f){
                 return true;
             }
@@ -144,8 +144,8 @@ export default class FileOperator{
         }
         for(let r of table){
             if(r.nodeName === "tr"){
-                var row = r;
-                var room = new Room;
+                let row = r;
+                let room = new Room;
                 room.room_number = row.childNodes[1].childNodes[1].childNodes[0].value.trim();
                 room.room_seats = parseInt(row.childNodes[3].childNodes[0].value.trim());
                 room.room_furniture = row.childNodes[5].childNodes[0].value.trim();
@@ -174,14 +174,18 @@ export default class FileOperator{
                     flagFoundRoom = true;
                 }
                 for(let r of b.rooms){
+                    let geoFacade = new GeoFacade;
+                    let geoResp: GeoResponse = geoFacade.getLatLon(r);
+                    let lat = geoResp.lat;
+                    let lon = geoResp.lon;
                     let dict = {
                         "rooms_fullname": b.fullname,
                         "rooms_shortname": b.shortname,
                         "rooms_number": r.room_number,
                         "rooms_name": r.room_name,
                         "rooms_address": b.address,
-                        "rooms_lat": 0,
-                        "rooms_lon": 0,
+                        "rooms_lat": lat,
+                        "rooms_lon": lon,
                         "rooms_seats": r.room_seats,
                         "rooms_type": r.room_type,
                         "rooms_furniture": r.room_furniture,
@@ -215,15 +219,14 @@ export default class FileOperator{
                     break;
                 }
             }
-            let buildings: Array<Building> =[];
-            buildings = this.fetchBuildings(table);
+            let buildings: Array<Building> = this.fetchBuildings(table);
 
             let fullnames: Array<string> = [];
-            for(var b of buildings){
+            for(let b of buildings){
                 fullnames.push(b.fullname);
             }
 
-            for(var f of txtArr) {
+            for(let f of txtArr) {
                 let document = parse5.parse(f);
                 let bldg = this.getBuilding(document, fullnames);
                 if (bldg) {

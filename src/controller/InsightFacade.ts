@@ -7,10 +7,17 @@ import FileOperator from "./FileOperator"
 import Log from "../Util";
 import QueryOperator from "./QueryOperator";
 
-var JSZip = require("jszip");
-var fs = require('fs');
+let JSZip = require("jszip");
+let fs = require('fs');
 
-var navigator = new FileOperator;
+let navigator = new FileOperator;
+
+// add, remove, query Success/Failure codes
+let addFailure = 400;
+let remSuccess = 204;
+let remFailure = 404;
+let queSuccess = 200;
+let queGenericFail = 400;
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -19,14 +26,14 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-        var resp: InsightResponseController = new InsightResponseController();
+        let resp: InsightResponseController = new InsightResponseController();
         navigator.makeDirectory("./Data_Set");
 
         return new Promise(function (fulfill, reject) {
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
                 resp.setCode(navigator.checkDatasetExists(id));
                 //navigator.readAndWrite(zip);
-                var pArr:Array<Promise<any>> = [];
+                let pArr:Array<Promise<any>> = [];
                 Object.keys(zip.files).forEach(function (relativePath:any, zipEntry:any) {
                     pArr.push(zip.files[relativePath].async("string"));
                 });
@@ -35,30 +42,30 @@ export default class InsightFacade implements IInsightFacade {
                     navigator.readAndWrite(txtArr, id);
                     fulfill(resp.getResponse());
                 }).catch(function (err) {
-                    resp.setError(400, err);
+                    resp.setError(addFailure, err);
                     reject(resp.getResponse());
                 });
 
             }).catch(function (err: string) {
-                resp.setError(400, err);
+                resp.setError(addFailure, err);
                 reject(resp.getResponse());
             })
         });
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
-        var resp: InsightResponseController = new InsightResponseController();
+        let resp: InsightResponseController = new InsightResponseController();
         return new Promise(function (fulfill, reject) {
             if (!fs.existsSync("./Data_Set")) {
-                resp.setCode(404);
+                resp.setCode(remFailure);
                 reject(resp.getResponse());
             }else {
                 if(!fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")){
-                    resp.setCode(404);
+                    resp.setCode(remFailure);
                     reject(resp.getResponse());
                 }else {
                     fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
-                    resp.setCode(204);
+                    resp.setCode(remSuccess);
                     fulfill(resp.getResponse());
                 }
             }
@@ -69,7 +76,7 @@ export default class InsightFacade implements IInsightFacade {
         var resp: InsightResponseController = new InsightResponseController();
         return new Promise(function(fulfill, reject){
             let eCaught = [];
-            let id = QueryOperator.validateQuerry(query);
+            let id = QueryOperator.validateQuery(query);
             if(id != "courses" && id != "rooms"){
                 resp.setError(400, "Invalid Query");
                 reject(resp.getResponse());
@@ -97,23 +104,23 @@ export default class InsightFacade implements IInsightFacade {
                 cols = QueryOperator.getColumns(options);
                 colTrim = QueryOperator.processColumns(cols, eCaught);
             }catch (err){
-                resp.setError(400, err)
+                resp.setError(queGenericFail, err)
                 reject(resp.getResponse());
                 return;
             }
 
-            var res : { [key:string] : any} = {};
+            let res : { [key:string] : any} = {};
 
             try{
                 QueryOperator.processOrder(options, cols, colTrim);
             }catch (err){
-                resp.setError(400, err);
+                resp.setError(queGenericFail, err);
                 reject(resp.getResponse());
                 return;
             }
 
             res["result"] = colTrim
-            resp.setFulfill(200, res);
+            resp.setFulfill(queSuccess, res);
             //navigator.writeResultToFile(res);
             fulfill(resp.getResponse());
         });

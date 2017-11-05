@@ -1,4 +1,4 @@
-var legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
+let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
     "courses_instructor", "courses_title", "courses_pass",
     "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
     "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
@@ -26,7 +26,7 @@ export class  ASTNode{
         this.childrenCount ++;
     }
 
-    //
+    // Sets keys and value of this node.
     setValue(value: any){
         for(let k of Object.keys(value)){
             this.key = k;
@@ -39,32 +39,33 @@ export class  ASTNode{
         return(this.childrenCount == 0);
     }
 
-    // Creates a copy of a root node to safely
+    // Creates a copy of a root node for safe mutation.
     cloneNode(): ASTNode {
-        let cmpy = new ASTNode(this.operand);                                            // Create a node from the node's string
-        cmpy.index = this.index;                                                         // Copy index
-        if(this.noChild()){                                                              // If it has no children
-            cmpy.childrenCount = this.childrenCount;                                     // Copy over directly and return.
+        let cmpy = new ASTNode(this.operand);
+        cmpy.index = this.index;
+        if(this.noChild()){
+            cmpy.childrenCount = this.childrenCount;
             cmpy.key = this.key;
             cmpy.val = this.val;
             return cmpy;
 
         }
-        for(let i of this.children){                                                     // Cycle through the children of the old node
-            cmpy.children.push(i.cloneNode());                                           // Clone and push.
+        for(let i of this.children){
+            cmpy.children.push(i.cloneNode());
             cmpy.childrenCount ++;
         }
-        return cmpy;                                                                    // Finally, return.
+        return cmpy;
     }
 
-    // evaluate the leaf
+    // Evaluate a leaf (dead-end) node in the query.
+    // i.e. IS, LT, GT, EQ
     calculateVal(line: any){
-        var val = this.val;
-        var key:string = this.key;
+        let val = this.val;
+        let key:string = this.key;
         if(legalKeys.indexOf(key) == -1){
             throw "Invalid Key";
         }
-        var bool:boolean = false;
+        let bool:boolean = false;
         switch (this.operand){
             case 'IS':
                 if (!(typeof (val) === "string")){
@@ -82,7 +83,7 @@ export class  ASTNode{
                 }else{
                     bool = (line[key] === val);
                     break;
-                };
+                }
             case 'LT':
                 if (!(typeof (val) === "number")){
                     throw "Invalid LT";
@@ -107,7 +108,8 @@ export class  ASTNode{
         return bool;
     }
 
-    // evaluate the node
+    // Evaluates a non-leaf (branching) node in the query.
+    // i.e. AND, OR, NOT
     calculateNode(): boolean{
         switch (this.operand){
             case 'AND':
@@ -120,10 +122,7 @@ export class  ASTNode{
                     curr = this.children[index];
                     index ++;
                 }
-                if(index > this.index && curr != false){
-                    return true;
-                }
-                return false;
+                return(index > this.index && curr != false)
             case 'OR':
                 if(this.noChild() && this.index == 0){
                     throw "Empty OR"

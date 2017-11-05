@@ -1,11 +1,11 @@
 import {ASTNode} from "../AST/ASTNode";
 import {Tree} from "../AST/Tree";
 
- var legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
-     "courses_instructor", "courses_title", "courses_pass",
-     "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
-     "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
-     "rooms_href", "courses_year"];
+let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
+    "courses_instructor", "courses_title", "courses_pass",
+    "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
+    "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
+    "rooms_href", "courses_year"];
 
 // Returns the first item in an Object.
 function first(obj: Object) {
@@ -24,11 +24,11 @@ export default class QueryOperator{
 
     // Forms a tree recursively.
     static recursive(data: any, tree: Tree, curr: ASTNode){
-        if(Array.isArray(data)){                                                        // If it's an array..
-            for(let i of data){                                                         // Cycle through it
-                let node = new ASTNode(first(i));                                       // Create new node from the first item
-                curr.pushChild(node);                                                   // Push into the list of children of the current node
-                this.recursive(i[first(i)], tree, node);                                     // Recursive call
+        if(Array.isArray(data)){
+            for(let i of data){
+                let node = new ASTNode(first(i));
+                curr.pushChild(node);
+                this.recursive(i[first(i)], tree, node);
             }
         }else if(curr.operand == 'NOT'){
             let node = new ASTNode(first(data));
@@ -38,7 +38,7 @@ export default class QueryOperator{
             }
         }
         else{
-            curr.setValue(data);                                                        // Otherwise, just set the current node's value
+            curr.setValue(data);
         }
     }
 
@@ -79,7 +79,7 @@ export default class QueryOperator{
     static processColumns(cols: Array<string>, extracted: Array<any>): Array<any>{
         let colTrim = [];
         for (let i of extracted) {
-            var obj: { [key: string]: any } = {};
+            let obj: { [key: string]: any } = {};
             for (let k of cols) {
                 if(legalKeys.indexOf(k) == -1){
                     throw "Invalid COLUMN";
@@ -103,7 +103,7 @@ export default class QueryOperator{
         }
     }
 
-    static validateQuerry(query: any): string{
+    static validateQuery(query: any): string{
         let txt = JSON.stringify(query);
         if(txt.indexOf("courses_") !== -1 && txt.indexOf("rooms_") !== -1){
             return null;

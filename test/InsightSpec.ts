@@ -39,7 +39,7 @@ describe("InsightSpec", function () {
     });
 
     it ("adding the dataset for the first time to make sure that it creates the json file with code 204" , function () {
-        this.timeout(10000);
+        this.timeout(100000);
         let data = fs.readFileSync('test/Datasets/1.zip');
         return insightFacade.addDataset("courses", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
@@ -53,7 +53,7 @@ describe("InsightSpec", function () {
     });
 
     it ("adding a dataset that is much shorter, expecting code 204" , function () {
-        this.timeout(10000);
+        this.timeout(100000);
         let data = fs.readFileSync('test/Datasets/2.zip');
         return insightFacade.addDataset("2", data.toString('base64')).then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
@@ -94,7 +94,7 @@ describe("InsightSpec", function () {
     });
 
     it ("this is a dataset added for the next test!" , function () {
-        this.timeout(10000);
+        this.timeout(100000);
         let fs   = require('fs');
         let data = fs.readFileSync('test/Datasets/1.zip');
         return insightFacade.addDataset("4", data.toString('base64')).then(function(insightResponse: InsightResponse){
