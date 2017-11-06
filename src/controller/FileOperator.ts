@@ -28,7 +28,7 @@ export default class FileOperator{
     // read the files from courses and write to JSON file
     readAndWriteCourses(txtArr: Array<string>, id: string, fulfill: any, insightResponse: any){
         let flagFoundCourse = false;
-        this.fs.writeFileSync("Data_Set/MyDatasetInsight"+id+".json", '[' + '\n');
+        this.fs.writeFileSync("Data_Set/MyInsight"+id+".json", '[' + '\n');
         let sep = "";
         for (let i of txtArr) {
             if (this.isJsonString(i)) {
@@ -58,16 +58,16 @@ export default class FileOperator{
                     };
                     let dictstring = JSON.stringify(dict);
 
-                    this.fs.appendFileSync("Data_Set/MyDatasetInsight"+id+".json", sep + dictstring);
+                    this.fs.appendFileSync("Data_Set/MyInsight"+id+".json", sep + dictstring);
                     if (!sep){
                         sep = ',\n'
                     }
                 }
             }
         }
-        this.fs.appendFileSync("Data_Set/MyDatasetInsight"+id+".json", '\n]');
+        this.fs.appendFileSync("Data_Set/MyInsight"+id+".json", '\n]');
         if(flagFoundCourse == false){
-            this.fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
+            this.fs.unlinkSync("./Data_Set/MyInsight"+id+".json");
             throw "the dataset is not valid";
         }else{
             fulfill(insightResponse);
@@ -180,7 +180,7 @@ export default class FileOperator{
 
         return Promise.all(respArr).then(function (geoArr) {
             console.log(1);
-            that.fs.writeFileSync("Data_Set/MyRoomsInsight"+id+".json", '[' + '\n');
+            that.fs.writeFileSync("Data_Set/MyInsight"+id+".json", '[' + '\n');
             let sep = "";
             for(let geoLoc of geoArr){
                 for(let b of buildings){
@@ -205,7 +205,7 @@ export default class FileOperator{
                                 };
                                 let dictstring = JSON.stringify(dict);
 
-                                that.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", sep + dictstring);
+                                that.fs.appendFileSync("Data_Set/MyInsight"+id+".json", sep + dictstring);
                                 if (!sep){
                                     sep = ',\n'
                                 }
@@ -215,9 +215,9 @@ export default class FileOperator{
                 }
             }
 
-            that.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", '\n]');
+            that.fs.appendFileSync("Data_Set/MyInsight"+id+".json", '\n]');
             if(flagFoundRoom == false){
-                that.fs.unlinkSync("./Data_Set/MyRoomsInsight"+id+".json");
+                that.fs.unlinkSync("./Data_Set/MyInsight"+id+".json");
                 throw "the dataset is not valid";
             }else{
                 fulfill(insightResponse);
@@ -291,13 +291,13 @@ export default class FileOperator{
     getDataset(id: string): string{
         if(id === "courses"){
             try{
-                return this.fs.readFileSync("./Data_Set/MyDatasetInsightcourses.json");
+                return this.fs.readFileSync("./Data_Set/MyInsightcourses.json");
             }catch(err) {
                 throw "No Dataset"
             }
         }else if(id === "rooms"){
             try{
-                return this.fs.readFileSync("./Data_Set/MyRoomsInsightrooms.json");
+                return this.fs.readFileSync("./Data_Set/MyInsightrooms.json");
             }catch(err) {
                 throw "No Dataset"
             }

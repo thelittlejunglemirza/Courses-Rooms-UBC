@@ -60,11 +60,11 @@ export default class InsightFacade implements IInsightFacade {
                 resp.setCode(remFailure);
                 reject(resp.getResponse());
             }else {
-                if(!fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")){
+                if(!fs.existsSync("Data_Set/MyInsight"+id+".json")){
                     resp.setCode(remFailure);
                     reject(resp.getResponse());
                 }else {
-                    fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
+                    fs.unlinkSync("./Data_Set/MyInsight"+id+".json");
                     resp.setCode(remSuccess);
                     fulfill(resp.getResponse());
                 }
