@@ -1,8 +1,7 @@
-
-
 import {Building, Room} from "../AST/Building";
-import GeoFacade from "./GeoFacade";
+import GeoLocation from "./GeoLocation";
 import {GeoResponse} from "./IGeoFacade";
+import {error} from "util";
 export default class FileOperator{
     public c = 0;
     private fs = require('fs');
@@ -15,19 +14,19 @@ export default class FileOperator{
     }
 
     // read and write the dataset
-    readAndWrite(txtArr: Array<string>, id:string){    //!!!!!
+    readAndWrite(txtArr: Array<string>, id:string, fulfill: any, insightResponse: any){    //!!!!!
         if(id === "courses"){
-            this.readAndWriteCourses(txtArr, id);
+            return this.readAndWriteCourses(txtArr, id, fulfill, insightResponse);
         }else if(id === "rooms"){
-            this.readAndWriteRooms(txtArr, id);
+            return this.readAndWriteRooms(txtArr, id, fulfill, insightResponse);
         }
         else{
-            this.readAndWriteCourses(txtArr, id);
+            return this.readAndWriteCourses(txtArr, id, fulfill, insightResponse);
         }
     }
 
     // read the files from courses and write to JSON file
-    readAndWriteCourses(txtArr: Array<string>, id: string){
+    readAndWriteCourses(txtArr: Array<string>, id: string, fulfill: any, insightResponse: any){
         let flagFoundCourse = false;
         this.fs.writeFileSync("Data_Set/MyDatasetInsight"+id+".json", '[' + '\n');
         let sep = "";
@@ -70,6 +69,9 @@ export default class FileOperator{
         if(flagFoundCourse == false){
             this.fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
             throw "the dataset is not valid";
+        }else{
+            fulfill(insightResponse);
+
         }
     }
 
@@ -164,50 +166,71 @@ export default class FileOperator{
         return;
     }
 
-    addToDataset(buildings: Array<Building>, id: string){
+    addToDataset(buildings: Array<Building>, id: string, fulfill: any, insightResponse: any){
         let flagFoundRoom = false;
-        this.fs.writeFileSync("Data_Set/MyRoomsInsight"+id+".json", '[' + '\n');
-        let sep = "";
-        for(let b of buildings){
-            if(b.has_rooms){
-                if(flagFoundRoom == false){
-                    flagFoundRoom = true;
-                }
-                for(let r of b.rooms){
-                    let geoFacade = new GeoFacade;
-                    let geoResp: GeoResponse = geoFacade.getLatLon(r);
-                    let lat = geoResp.lat;
-                    let lon = geoResp.lon;
-                    let dict = {
-                        "rooms_fullname": b.fullname,
-                        "rooms_shortname": b.shortname,
-                        "rooms_number": r.room_number,
-                        "rooms_name": r.room_name,
-                        "rooms_address": b.address,
-                        "rooms_lat": lat,
-                        "rooms_lon": lon,
-                        "rooms_seats": r.room_seats,
-                        "rooms_type": r.room_type,
-                        "rooms_furniture": r.room_furniture,
-                        "rooms_href": r.room_href
-                    };
-                    let dictstring = JSON.stringify(dict);
+        let respArr: Array<GeoResponse> = [];
+        for(let bl of buildings){
+            let geoResp: GeoResponse = GeoLocation.getGeoCode(bl.address);
+            respArr.push(geoResp);
+        }
 
-                    this.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", sep + dictstring);
-                    if (!sep){
-                        sep = ',\n'
+        //console.log(respArr);
+
+        let that = this;
+
+        return Promise.all(respArr).then(function (geoArr) {
+            console.log(1);
+            that.fs.writeFileSync("Data_Set/MyRoomsInsight"+id+".json", '[' + '\n');
+            let sep = "";
+            for(let geoLoc of geoArr){
+                for(let b of buildings){
+                    if(geoLoc.address === b.address){
+                        if(b.has_rooms){
+                            if(flagFoundRoom == false){
+                                flagFoundRoom = true;
+                            }
+                            for(let r of b.rooms){
+                                let dict = {
+                                    "rooms_fullname": b.fullname,
+                                    "rooms_shortname": b.shortname,
+                                    "rooms_number": r.room_number,
+                                    "rooms_name": r.room_name,
+                                    "rooms_address": b.address,
+                                    "rooms_lat": geoLoc.lat,
+                                    "rooms_lon": geoLoc.lon,
+                                    "rooms_seats": r.room_seats,
+                                    "rooms_type": r.room_type,
+                                    "rooms_furniture": r.room_furniture,
+                                    "rooms_href": r.room_href
+                                };
+                                let dictstring = JSON.stringify(dict);
+
+                                that.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", sep + dictstring);
+                                if (!sep){
+                                    sep = ',\n'
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-        this.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", '\n]');
-        if(flagFoundRoom == false){
-            this.fs.unlinkSync("./Data_Set/MyRoomsInsight"+id+".json");
-            throw "the dataset is not valid";
-        }
+
+            that.fs.appendFileSync("Data_Set/MyRoomsInsight"+id+".json", '\n]');
+            if(flagFoundRoom == false){
+                that.fs.unlinkSync("./Data_Set/MyRoomsInsight"+id+".json");
+                throw "the dataset is not valid";
+            }else{
+                fulfill(insightResponse);
+
+            }
+        }).catch(function (err) {
+            console.log("promises not fuilled");
+            console.log(err);
+            throw err;
+        });
     }
 
-    readAndWriteRooms(txtArr: Array<string>, id: string){
+    readAndWriteRooms(txtArr: Array<string>, id: string, fulfill: any, insightResponse: any){
         const parse5 = require('parse5');
         try{
 
@@ -234,7 +257,7 @@ export default class FileOperator{
                 }
             }
 
-            this.addToDataset(buildings, id);
+            return this.addToDataset(buildings, id, fulfill, insightResponse);
 
 
         }catch (err){

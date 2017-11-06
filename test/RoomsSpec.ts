@@ -3,7 +3,7 @@ import {InsightResponse} from "../src/controller/IInsightFacade";
 import {expect} from 'chai';
 import Log from "../src/Util";
 
-describe("InsightSpec", function () {
+describe("RoomsSpec", function () {
 
     let fs = require('fs');
 
@@ -58,6 +58,7 @@ describe("InsightSpec", function () {
         }).catch(function (insightResponse: InsightResponse) {
             //console.log("in catch:");
             console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
             expect.fail();
         })
 
@@ -73,6 +74,7 @@ describe("InsightSpec", function () {
         }).catch(function (insightResponse: InsightResponse) {
             //console.log("in catch:");
             console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
             expect.fail();
         })
 

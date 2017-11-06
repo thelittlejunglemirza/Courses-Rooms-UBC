@@ -1,4 +1,5 @@
 export interface GeoResponse {
+    address?: string;
     lat? : number;
     lon? : number;
     error? : string

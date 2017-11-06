@@ -1,4 +1,4 @@
-import GeoFacade from "../src/controller/GeoFacade";
+import GeoFacade from "../src/controller/GeoLocation";
 import {GeoResponse} from "../src/controller/IGeoFacade";
 import {expect} from 'chai';
 import Log from "../src/Util";
@@ -14,7 +14,7 @@ describe ("GeoSpec", function(){
     afterEach(function () {
         geoFacade = null;
     });
-
+    /*
     let room0 = {"rooms_address": "6363 Agronomy Road", "rooms_name": "ORCH_4074"};
     let room1 = {"rooms_address": "6245 Agronomy Road V6T 1Z4", "rooms_name": "DMP_310"};
     let room2 = {"rooms_name": "DMP_101"};
@@ -27,7 +27,8 @@ describe ("GeoSpec", function(){
     let roomset4 = {room0, room1, room2, room3};    // 2 and 3 erroneous
     let roomset5 = {room2, room3, room4};           // All erroneous
 
-    it ("Getting the GeoResp of a Room with an Address key." , function () {
+
+    it.skip ("Getting the GeoResp of a Room with an Address key." , function () {
         this.timeout(10000);
         return geoFacade.getLatLon(room0).then(function(resp: GeoResponse){
             Log.test("Lat : " + resp.lat);
@@ -41,7 +42,7 @@ describe ("GeoSpec", function(){
         });
     });
 
-    it("Getting the GeoResp of another room with an Address key." , function () {
+    it.skip("Getting the GeoResp of another room with an Address key." , function () {
         this.timeout(10000);
         return geoFacade.getLatLon(room1).then(function (resp: GeoResponse) {
             Log.test("Lat : " + resp.lat);
@@ -55,7 +56,7 @@ describe ("GeoSpec", function(){
         });
     });
 
-    it("Getting the GeoResp of an address-less room." , function () {
+    it.skip("Getting the GeoResp of an address-less room." , function () {
         this.timeout(10000);
         return geoFacade.getLatLon(room2).then(function (resp: GeoResponse) {
             Log.test("Lat : " + resp.lat);
@@ -69,7 +70,7 @@ describe ("GeoSpec", function(){
         });
     });
 
-    it("Getting the GeoResp of a room with an invalid address." , function () {
+    it.skip("Getting the GeoResp of a room with an invalid address." , function () {
         this.timeout(10000);
         return geoFacade.getLatLon(room3).then(function (resp: GeoResponse) {
             Log.test("Lat : " + resp.lat);
@@ -83,7 +84,7 @@ describe ("GeoSpec", function(){
         });
     });
 
-    it("Getting the GeoResp of an empty roomset." , function () {
+    it.skip("Getting the GeoResp of an empty roomset." , function () {
         this.timeout(10000);
         return geoFacade.getLatLon(room4).then(function (resp: GeoResponse) {
             Log.test("Lat : " + resp.lat);
@@ -96,4 +97,5 @@ describe ("GeoSpec", function(){
             expect(err.error).to.deep.equal("Address not found (undefined)");
         });
     });
+    */
 });

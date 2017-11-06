@@ -39,8 +39,8 @@ export default class InsightFacade implements IInsightFacade {
                 });
 
                 Promise.all(pArr).then(function (txtArr) {
-                    navigator.readAndWrite(txtArr, id);
-                    fulfill(resp.getResponse());
+                    return navigator.readAndWrite(txtArr, id, fulfill, resp.getResponse());
+                    //fulfill(resp.getResponse());
                 }).catch(function (err) {
                     resp.setError(addFailure, err);
                     reject(resp.getResponse());
@@ -119,7 +119,7 @@ export default class InsightFacade implements IInsightFacade {
                 return;
             }
 
-            res["result"] = colTrim
+            res["result"] = colTrim;
             resp.setFulfill(queSuccess, res);
             //navigator.writeResultToFile(res);
             fulfill(resp.getResponse());
