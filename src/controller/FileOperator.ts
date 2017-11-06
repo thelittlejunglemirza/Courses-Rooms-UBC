@@ -21,7 +21,7 @@ export default class FileOperator{
             return this.readAndWriteRooms(txtArr, id, fulfill, insightResponse);
         }
         else{
-            return this.readAndWriteCourses(txtArr, id, fulfill, insightResponse);
+            throw "invalid id";
         }
     }
 

@@ -52,19 +52,6 @@ describe("InsightSpec", function () {
 
     });
 
-    it ("adding a dataset that is much shorter, expecting code 204" , function () {
-        this.timeout(100000);
-        let data = fs.readFileSync('test/Datasets/2.zip');
-        return insightFacade.addDataset("2", data.toString('base64')).then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(204);
-        }).catch(function (insightResponse: InsightResponse) {
-            console.log("in catch:");
-            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
-            expect.fail();
-        })
-
-    });
 
     it ("Adding a valid ZIP with no data at all should return an error code of 400." , function () {
         this.timeout(10000);
@@ -92,34 +79,6 @@ describe("InsightSpec", function () {
         })
 
     });
-
-    it ("this is a dataset added for the next test!" , function () {
-        this.timeout(100000);
-        let fs   = require('fs');
-        let data = fs.readFileSync('test/Datasets/1.zip');
-        return insightFacade.addDataset("4", data.toString('base64')).then(function(insightResponse: InsightResponse){
-            expect(insightResponse.code).to.deep.equal(204);
-        }).catch(function (insightResponse: InsightResponse) {
-            expect.fail();
-        })
-
-    });
-
-    it ("adding a second dataset that is much longer, expecting code 201, and correct overwrite of existing dataset" , function () {
-        this.timeout(10000);
-        let fs   = require('fs');
-        let data = fs.readFileSync('test/Datasets/2.zip');
-        return insightFacade.addDataset("4", data.toString('base64')).then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(201);
-        }).catch(function (insightResponse: InsightResponse) {
-            console.log("in catch:");
-            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
-            expect.fail();
-        })
-
-    });
-
 
     it ("adding an invalid zip file should fail with error code 400" , function () {
         this.timeout(10000);
@@ -161,18 +120,6 @@ describe("InsightSpec", function () {
 
     });
 
-    it ("removing a dataset that is previously added" , function () {
-        this.timeout(20000);
-        return insightFacade.removeDataset("4").then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(204);
-        }).catch(function (insightResponse: InsightResponse) {
-            console.log("in catch:");
-            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
-            expect.fail();
-        })
-
-    });
 
     it ("removing a dataset that does not exist, error code 404" , function () {
         this.timeout(10000);
@@ -187,9 +134,22 @@ describe("InsightSpec", function () {
 
     });
 
-    it ("removing a dataset that is previously added ID 2" , function () {
+    it ("adding a dataset with id that is not courses" , function () {
+        this.timeout(10000);
+        return insightFacade.removeDataset("4").then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("in catch:");
+            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
+            console.log("and error body: " + insightResponse.body);
+            expect(insightResponse.code).to.deep.equal(404);
+        })
+
+    });
+    /*
+    it.skip ("removing a dataset that is previously added" , function () {
         this.timeout(20000);
-        return insightFacade.removeDataset("2").then(function(insightResponse: InsightResponse){
+        return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {
@@ -199,6 +159,7 @@ describe("InsightSpec", function () {
         })
 
     });
+    */
 
 
 });
