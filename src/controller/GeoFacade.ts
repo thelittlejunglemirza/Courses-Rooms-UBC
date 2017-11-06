@@ -14,7 +14,7 @@ export default class GeoFacade implements IGeoFacade {
         return new Promise(function(fulfill, reject){
             let addr = room["rooms_address"];
             let encodedAddress = encodeURI(addr).toString();
-            let urlHead = "http://skaha.cs.ubc.ca:11316/api/v1/team118/"
+            let urlHead = "http://skaha.cs.ubc.ca:11316/api/v1/team118/";
             let url = urlHead + encodedAddress;
             console.log("The URL returned is:" + url);
             http.get(url, (res: any) => {
