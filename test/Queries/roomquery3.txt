@@ -1,0 +1,12 @@
+{
+    "WHERE": {
+        "IS": {
+            "rooms_number": 123
+        }
+    },
+    "OPTIONS": {
+        "COLUMNS": [
+            "rooms_address", "rooms_name"
+        ]
+    }
+}
