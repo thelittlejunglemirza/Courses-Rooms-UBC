@@ -20,7 +20,7 @@ export default class GeoLocation{
             let geoResponse: GeoResponse = {};
             geoResponse.address = building_address;
             let encodedAddress = encodeURI(building_address).toString();
-            let url = "http://skaha.cs.ubc.ca:11316/api/v1/team89/" + encodedAddress;
+            let url = "http://skaha.cs.ubc.ca:11316/api/v1/team118/" + encodedAddress;
             request.get({
                 url: url,
                 headers: {

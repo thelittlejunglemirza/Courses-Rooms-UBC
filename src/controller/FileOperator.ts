@@ -1,7 +1,7 @@
 import {Building, Room} from "../AST/Building";
 import GeoLocation from "./GeoLocation";
 import {GeoResponse} from "./IGeoFacade";
-import {error} from "util";
+
 export default class FileOperator{
     public c = 0;
     private fs = require('fs');

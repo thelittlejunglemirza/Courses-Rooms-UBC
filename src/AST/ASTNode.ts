@@ -32,6 +32,9 @@ export class  ASTNode{
             this.key = k;
         }
         this.val = value[this.key];
+        if(this.key === "courses_year" && typeof this.key !== "string"){
+            throw "invalid query";
+        }
     }
 
     // Checks if the node has no children.
