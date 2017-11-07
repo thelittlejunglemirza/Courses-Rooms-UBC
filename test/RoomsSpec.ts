@@ -72,6 +72,7 @@ describe("RoomsSpec", function () {
 
     });
 
+
     it("test if perform query to check for EQ" , function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/Queries/roomquery3.txt');
