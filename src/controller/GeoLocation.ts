@@ -15,7 +15,7 @@ export default class GeoLocation{
 
     }
 
-    static getGeoCode(building_address: string): Promise<any>{
+    static getGeoCode(building_address: string): Promise<GeoResponse>{
         return new Promise(function(fulfill, reject){
             let geoResponse: GeoResponse = {};
             geoResponse.address = building_address;
