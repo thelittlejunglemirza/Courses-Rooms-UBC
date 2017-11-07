@@ -259,7 +259,6 @@ export default class FileOperator{
 
 
         }catch (err){
-            console.log(err);
             throw err;
         }
 
