@@ -104,7 +104,7 @@ export default class InsightFacade implements IInsightFacade {
                 cols = QueryOperator.getColumns(options);
                 colTrim = QueryOperator.processColumns(cols, eCaught);
             }catch (err){
-                resp.setError(queGenericFail, err)
+                resp.setError(queGenericFail, err);
                 reject(resp.getResponse());
                 return;
             }

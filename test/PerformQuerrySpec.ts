@@ -471,7 +471,72 @@ describe("PerformQuerrySpec", function () {
             expect(insightResponse.code).to.deep.equal(400);
         })
 
-    })
+    });
+
+    it ("Invalid IS type", function () {
+        this.timeout(10000);
+        let data29 = fs.readFileSync('test/Queries/query29.txt');
+        let obj29 = JSON.parse(data29);
+        return insightFacade.performQuery(obj29).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Invalid GT type", function () {
+        this.timeout(10000);
+        let data30 = fs.readFileSync('test/Queries/query30.txt');
+        let obj30 = JSON.parse(data30);
+        return insightFacade.performQuery(obj30).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Invalid LT type", function () {
+        this.timeout(10000);
+        let data31 = fs.readFileSync('test/Queries/query31.txt');
+        let obj31 = JSON.parse(data31);
+        return insightFacade.performQuery(obj31).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Invalid EQ type", function () {
+        this.timeout(10000);
+        let data32 = fs.readFileSync('test/Queries/query32.txt');
+        let obj32 = JSON.parse(data32);
+        return insightFacade.performQuery(obj32).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it ("Invalid key", function () {
+        this.timeout(10000);
+        let data33 = fs.readFileSync('test/Queries/query33.txt');
+        let obj33 = JSON.parse(data33);
+        return insightFacade.performQuery(obj33).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
     /*
     it ("removing a dataset" , function () {
         this.timeout(20000);

@@ -1,0 +1,28 @@
+{
+  "WHERE":{
+     "OR":[
+        {
+           "AND":[
+              {
+                 "EQ":{
+                    "courses_avg":"no"
+                 }
+              },
+              {
+                 "IS":{
+                    "courses_dept":"*cp*"
+                 }
+              }
+           ]
+        }
+     ]
+  },
+  "OPTIONS":{
+     "COLUMNS":[
+        "courses_dept",
+        "courses_id",
+        "courses_avg"
+     ],
+     "ORDER":"courses_avg"
+  }
+}
