@@ -170,7 +170,7 @@ export default class FileOperator{
         let flagFoundRoom = false;
         let respArr: Array<GeoResponse> = [];
         for(let bl of buildings){
-            let geoResp: GeoResponse = GeoLocation.getGeoCode(bl.address);
+            let geoResp: Promise<GeoResponse> = GeoLocation.getGeoCode(bl.address);
             respArr.push(geoResp);
         }
 
