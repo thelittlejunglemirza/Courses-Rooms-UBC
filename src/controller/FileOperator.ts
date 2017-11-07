@@ -168,7 +168,7 @@ export default class FileOperator{
 
     addToDataset(buildings: Array<Building>, id: string, fulfill: any, insightResponse: any){
         let flagFoundRoom = false;
-        let respArr: Array<GeoResponse> = [];
+        let respArr: Array<any> = [];
         for(let bl of buildings){
             let geoResp: Promise<GeoResponse> = GeoLocation.getGeoCode(bl.address);
             respArr.push(geoResp);
@@ -279,8 +279,8 @@ export default class FileOperator{
 
     // check if dataset exists return 201 if true 204 otherwise
     checkDatasetExists(id: string): number{
-        if (this.fs.existsSync("Data_Set/MyDatasetInsight"+id+".json")) {
-            this.fs.unlinkSync("./Data_Set/MyDatasetInsight"+id+".json");
+        if (this.fs.existsSync("Data_Set/MyInsight"+id+".json")) {
+            this.fs.unlinkSync("./Data_Set/MyInsight"+id+".json");
             return 201;
         }else{
             return 204;

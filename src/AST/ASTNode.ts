@@ -32,7 +32,7 @@ export class  ASTNode{
             this.key = k;
         }
         this.val = value[this.key];
-        if(this.key === "courses_year" && typeof this.key !== "string"){
+        if(this.key === "rooms_number" && typeof this.key !== "string"){
             throw "invalid query";
         }
     }
