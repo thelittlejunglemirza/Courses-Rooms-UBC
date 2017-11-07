@@ -79,4 +79,21 @@ describe("RoomsSpec", function () {
         })
 
     });
+
+    it("test if perform query to check for EQ" , function () {
+        this.timeout(10000);
+        let data = fs.readFileSync('test/Queries/roomquery3.txt');
+        let obj = JSON.parse(data);
+        return insightFacade.performQuery(obj).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+            //expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
 });

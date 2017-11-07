@@ -224,8 +224,6 @@ export default class FileOperator{
 
             }
         }).catch(function (err) {
-            console.log("promises not fuilled");
-            console.log(err);
             throw err;
         });
     }

@@ -1,8 +1,11 @@
-let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
-    "courses_instructor", "courses_title", "courses_pass",
-    "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
-    "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
-    "rooms_href", "courses_year"];
+let legalKeys: { [key:string] : string } =
+                       {"courses_dept": "string",              "courses_id": "string",              "courses_avg": "number",
+                        "courses_instructor": "string",        "courses_title": "string",           "courses_pass": "number",
+                        "courses_fail": "number",              "courses_audit": "number",           "courses_uuid": "string",
+                        "rooms_fullname": "string",            "rooms_shortname": "string",         "rooms_number": "string",
+                        "rooms_name": "string",                "rooms_address": "string",           "rooms_lat": "number",
+                        "rooms_lon": "number",                 "rooms_seats": "number",             "rooms_type": "string",
+                        "rooms_furniture": "string",           "rooms_href": "string",              "courses_year": "number"};
 
 export class  ASTNode{
     public children: Array<any>;
@@ -32,10 +35,11 @@ export class  ASTNode{
             this.key = k;
         }
         this.val = value[this.key];
-        if(this.key === "rooms_number" && typeof this.key !== "string"){
+        if(legalKeys[this.key] !== typeof this.val){
             throw "invalid query";
         }
     }
+
 
     // Checks if the node has no children.
     noChild(){
@@ -65,7 +69,7 @@ export class  ASTNode{
     calculateVal(line: any){
         let val = this.val;
         let key:string = this.key;
-        if(legalKeys.indexOf(key) == -1){
+        if(!(key in legalKeys)){
             throw "Invalid Key";
         }
         let bool:boolean = false;

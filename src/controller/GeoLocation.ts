@@ -28,7 +28,7 @@ export default class GeoLocation{
                 }
             }, function (error: any, response: any, body: any) {
                 if (error) {
-                    console.log(error);
+                    //console.log(error);
                     geoResponse.error = response.statusCode;
                     fulfill(geoResponse);
                     return;
