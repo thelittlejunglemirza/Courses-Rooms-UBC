@@ -1,7 +1,7 @@
 import {GeoResponse} from "./IGeoFacade";
 
 let request = require('request');
-var chai = require('chai')
+let chai = require('chai')
     , chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
@@ -28,7 +28,6 @@ export default class GeoLocation{
                 }
             }, function (error: any, response: any, body: any) {
                 if (error) {
-                    //console.log(error);
                     geoResponse.error = response.statusCode;
                     fulfill(geoResponse);
                     return;

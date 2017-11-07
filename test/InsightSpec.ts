@@ -45,8 +45,8 @@ describe("InsightSpec", function () {
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {
-            console.log("in catch:");
-            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
+            //console.log("in catch:");
+            //console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
             expect.fail();
         })
 
@@ -57,7 +57,7 @@ describe("InsightSpec", function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/Datasets/nocourses.zip');
         return insightFacade.addDataset("10", data.toString('base64')).then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
+            //Log.test('Code: ' + insightResponse.code);
             expect.fail();
         }).catch(function (insightResponse: InsightResponse) {
             console.log("Rejected with error code: " + insightResponse.code);
@@ -98,7 +98,7 @@ describe("InsightSpec", function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/Datasets/notazip');
         return insightFacade.addDataset("6", data.toString('base64')).then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
+            //Log.test('Code: ' + insightResponse.code);
             expect.fail();
         }).catch(function (insightResponse: InsightResponse) {
             console.log("Rejected with error code: " + insightResponse.code);
@@ -111,7 +111,7 @@ describe("InsightSpec", function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/Datasets/invalid.zip');                             // 1 file, {] <- invalid JSON
         return insightFacade.addDataset("7", data.toString('base64')).then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
+            //Log.test('Code: ' + insightResponse.code);
             expect.fail();
         }).catch(function (insightResponse: InsightResponse) {
             console.log("Rejected with error code: " + insightResponse.code);

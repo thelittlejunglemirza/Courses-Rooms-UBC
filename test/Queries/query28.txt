@@ -1,0 +1,13 @@
+{
+  "WHERE":{
+     "IS":{}
+  },
+  "OPTIONS":{
+     "COLUMNS":[
+        "course_dept",
+        "course_id",
+        "course_avg"
+     ],
+     "ORDER":"course_avg"
+  }
+}

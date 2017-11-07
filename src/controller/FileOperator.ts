@@ -302,6 +302,7 @@ export default class FileOperator{
         }
     }
 
+    /*
     // write the result on a file called Query.json
     writeResultToFile(obj: { [key:string] : any}){
         const content = JSON.stringify(obj);
@@ -314,5 +315,5 @@ export default class FileOperator{
         });
 
     }
-
+    */
 }

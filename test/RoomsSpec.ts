@@ -41,8 +41,6 @@ describe("RoomsSpec", function () {
             Log.test('Code: ' + insightResponse.code);
             //expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {
-            console.log("in catch:");
-            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
             expect.fail();
         })
 
@@ -56,9 +54,6 @@ describe("RoomsSpec", function () {
             //Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(200);
         }).catch(function (insightResponse: InsightResponse) {
-            //console.log("in catch:");
-            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
-            console.log(insightResponse.body);
             expect.fail();
         })
 
@@ -72,9 +67,6 @@ describe("RoomsSpec", function () {
             //Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(200);
         }).catch(function (insightResponse: InsightResponse) {
-            //console.log("in catch:");
-            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
-            console.log(insightResponse.body);
             expect.fail();
         })
 
