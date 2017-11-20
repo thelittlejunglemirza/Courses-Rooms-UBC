@@ -64,7 +64,7 @@ describe ("GeoSpec", function(){
             Log.test("Error : " + err.error);
             expect(err.lat).to.deep.equal(undefined);
             expect(err.lon).to.deep.equal(undefined);
-            expect(err.error).to.deep.equal("Address not found (undefined)");
+            expect(err.error).to.deep.equal("Address not found (null)");
         });
     });
 

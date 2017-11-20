@@ -3,7 +3,6 @@ import GeoLocation from "./GeoLocation";
 import {GeoResponse} from "./IGeoFacade";
 
 export default class FileOperator{
-    public c = 0;
     private fs = require('fs');
 
     // create the directory if it doesnt already exist
@@ -38,26 +37,7 @@ export default class FileOperator{
                     flagFoundCourse = true;
                 }
                 for (let j of obj) {
-                    let course_year: number;
-                    if(j["Section"] === "overall"){
-                        course_year = 1900;
-                    }else{
-                        course_year = parseInt(j["Year"]);
-                    }
-                    let dict = {
-                        "courses_dept": j['Subject'],
-                        "courses_id": j['Course'],
-                        "courses_avg": j['Avg'],
-                        "courses_instructor": j['Professor'],
-                        "courses_title": j['Title'],
-                        "courses_pass": j['Pass'],
-                        "courses_fail": j['Fail'],
-                        "courses_audit": j['Audit'],
-                        "courses_uuid": j['id'].toString(),
-                        "courses_year": course_year
-                    };
-                    let dictstring = JSON.stringify(dict);
-
+                    let dictstring = this.makeDataString(id, j);
                     this.fs.appendFileSync("Data_Set/MyInsight"+id+".json", sep + dictstring);
                     if (!sep){
                         sep = ',\n'
@@ -118,10 +98,17 @@ export default class FileOperator{
         return false;
     }
 
+    // Checks if current Attribute is the building-info, and if the building is a part of the list of buildings
+    isInfoAndInBuildings(attr: any, document: any, fullnames: Array<string>): boolean{
+        let value = attr.value;
+        return (value === "building-info" &&
+            this.isInBuildings(document.childNodes[1].childNodes[0].childNodes[0],fullnames));
+    }
+
     getBuilding(document: any, fullnames: Array<string>):string{
         if(document.nodeName === "div"){
             for(let a of document.attrs){
-                if(a.value === "building-info" && this.isInBuildings(document.childNodes[1].childNodes[0].childNodes[0],fullnames)){
+                if(this.isInfoAndInBuildings(a, document, fullnames)){
                     let bldg:string = document.childNodes[1].childNodes[0].childNodes[0].value;
                     return bldg;
                 }
@@ -190,21 +177,7 @@ export default class FileOperator{
                                 flagFoundRoom = true;
                             }
                             for(let r of b.rooms){
-                                let dict = {
-                                    "rooms_fullname": b.fullname,
-                                    "rooms_shortname": b.shortname,
-                                    "rooms_number": r.room_number,
-                                    "rooms_name": r.room_name,
-                                    "rooms_address": b.address,
-                                    "rooms_lat": geoLoc.lat,
-                                    "rooms_lon": geoLoc.lon,
-                                    "rooms_seats": r.room_seats,
-                                    "rooms_type": r.room_type,
-                                    "rooms_furniture": r.room_furniture,
-                                    "rooms_href": r.room_href
-                                };
-                                let dictstring = JSON.stringify(dict);
-
+                                let dictstring = that.makeDataString(id, r, b, geoLoc);
                                 that.fs.appendFileSync("Data_Set/MyInsight"+id+".json", sep + dictstring);
                                 if (!sep){
                                     sep = ',\n'
@@ -315,4 +288,49 @@ export default class FileOperator{
 
     }
     */
+
+    makeDataString(id:string, iterObj: any, building?: Building, geoLoc?: GeoResponse): String{
+        if(id === "courses"){
+            let course_year: number;
+            let j = iterObj;
+            if(j["Section"] === "overall"){
+                course_year = 1900;
+            }else{
+                course_year = parseInt(j["Year"]);
+            }
+            let dict = {
+                "courses_dept": j['Subject'],
+                "courses_id": j['Course'],
+                "courses_avg": j['Avg'],
+                "courses_instructor": j['Professor'],
+                "courses_title": j['Title'],
+                "courses_pass": j['Pass'],
+                "courses_fail": j['Fail'],
+                "courses_audit": j['Audit'],
+                "courses_uuid": j['id'].toString(),
+                "courses_year": course_year
+            };
+            return JSON.stringify(dict);
+        }else if(id === "rooms"){
+            let b = building;
+            let r = iterObj;
+            let dict = {
+                "rooms_fullname": b.fullname,
+                "rooms_shortname": b.shortname,
+                "rooms_number": r.room_number,
+                "rooms_name": r.room_name,
+                "rooms_address": b.address,
+                "rooms_lat": geoLoc.lat,
+                "rooms_lon": geoLoc.lon,
+                "rooms_seats": r.room_seats,
+                "rooms_type": r.room_type,
+                "rooms_furniture": r.room_furniture,
+                "rooms_href": r.room_href
+            };
+            return JSON.stringify(dict);
+        }
+        else{
+            throw "invalid id";
+        }
+    }
 }
