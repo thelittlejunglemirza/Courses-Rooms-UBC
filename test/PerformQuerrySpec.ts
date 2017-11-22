@@ -62,9 +62,13 @@ describe("PerformQuerrySpec", function () {
     let data16 = fs.readFileSync('test/Queries/query16.txt');
     let obj16 = JSON.parse(data16);
 
-
-
-
+    // D3 test Queries
+    let d3data0 = fs.readFileSync('test/Queries/d3query0.txt');
+    let d3obj0 = JSON.parse(d3data0);
+    let d3data1 = fs.readFileSync('test/Queries/d3query1.txt');
+    let d3obj1 = JSON.parse(d3data1);
+    let d3data2 = fs.readFileSync('test/Queries/d3query2.txt');
+    let d3obj2 = JSON.parse(d3data2);
 
 
 
@@ -563,5 +567,34 @@ describe("PerformQuerrySpec", function () {
 
     });
 
+    it("Valid D3-Query A", function () {
+        this.timeout(10000);
+
+        return insightFacade.performQuery(d3obj0).then(function(insightResponse: InsightResponse){
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function(insightResponse: InsightResponse) {
+            expect.fail();
+        })
+    })
+
+    it("Valid D3-Query B", function () {
+        this.timeout(10000);
+
+        return insightFacade.performQuery(d3obj1).then(function(insightResponse: InsightResponse){
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function(insightResponse: InsightResponse) {
+            expect.fail();
+        })
+    })
+
+    it("Invalid D3-Query (based on) A", function () {
+        this.timeout(10000);
+
+        return insightFacade.performQuery(d3obj2).then(function(insightResponse: InsightResponse){
+            expect.fail();
+        }).catch(function(insightResponse: InsightResponse) {
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+    })
 
 });

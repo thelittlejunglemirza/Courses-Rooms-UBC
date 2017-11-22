@@ -3,7 +3,7 @@
  */
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import {InsightResponseController} from "./InsightResponseController";
-import FileOperator from "./FileOperator"
+import FileOperator from "./FileOperator";
 import Log from "../Util";
 import QueryOperator from "./QueryOperator";
 
@@ -83,6 +83,7 @@ export default class InsightFacade implements IInsightFacade {
                 return;
             }
             let options = query["OPTIONS"];
+            // let transformations = query["TRANSFORMATIONS"];
             let colTrim: Array<any> = [];
             let cols: Array<string> = [];
 
@@ -95,7 +96,7 @@ export default class InsightFacade implements IInsightFacade {
 
                 let root = QueryOperator.processWhere(where);
                 let dataset = navigator.getDataset(id);
-                let obj = JSON.parse(dataset)
+                let obj = JSON.parse(dataset);
                 eCaught = QueryOperator.extractData(obj, root);
                 if(!("OPTIONS" in query)){
                     throw "Invalid OPTIONS";
@@ -125,4 +126,6 @@ export default class InsightFacade implements IInsightFacade {
             fulfill(resp.getResponse());
         });
     }
+
+
 }

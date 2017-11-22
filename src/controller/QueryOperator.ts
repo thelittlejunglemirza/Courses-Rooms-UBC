@@ -103,6 +103,43 @@ export default class QueryOperator{
         }
     }
 
+    // Get the unique set keys from TRANSFORMATIONS
+    static getGroup(trans: {[key:string]: any}): Array<string>{
+        if(!("GROUP" in trans)){
+            throw "Invalid GROUP";
+        }
+        let grp = trans["GROUP"];
+        if (grp.length == 0){
+            throw "Empty GROUP";
+        }
+        return grp;
+    }
+
+    // Given an ordered, trimmed column, return grouped results with applied calculations
+    // 1. Get a list of unique sets after scouring colTrim.
+    // 2. For each unique set, look through colTrim. Filter out each from the unique sets.
+    // 3. Apply the calculation to the value selected on each unique set. (Function call)
+    // 4. Write unique sets down with calculated results.
+    static processGroup(grp: Array<string>, colTrim: Array<any>): Array<any>{
+        let grpTrim: Array<any> = [];
+        let uniqueSets: Array<Array<any>> = [];
+                                                                // Where grp = courses_dept
+        for (let i of colTrim) {                                // i = { courses_dept: 'epse', courses_avg: 97.09 }
+            let obj: { [key: string]: any } = {};               // { courses_dept: 'epse', 'AVG': etc. }
+            let uniqueSet: Array<any> = [];                     // List of unique sets
+            for (let k of grp) {                                // k = courses_dept
+                if(legalKeys.indexOf(k) == -1){
+                    throw "Invalid GROUP";
+                }
+                if(i[k] === undefined) throw "Invalid GROUP";   // Group key doesn't match the filtered colTrim's keys
+                uniqueSet.push(i[k]);                           // uniqueSet = ['epse']
+            }
+            uniqueSets.push(uniqueSet);
+        }
+        return grpTrim;
+    }
+
+
     static validateQuery(query: any): string{
         let txt = JSON.stringify(query);
         if(txt.indexOf("courses_") !== -1 && txt.indexOf("rooms_") !== -1){
