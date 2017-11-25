@@ -86,6 +86,7 @@ export default class InsightFacade implements IInsightFacade {
             // let transformations = query["TRANSFORMATIONS"];
             let colTrim: Array<any> = [];
             let cols: Array<string> = [];
+            let transformed: Array<any> = [];
 
             try{
                 let where = query["WHERE"];
@@ -101,6 +102,7 @@ export default class InsightFacade implements IInsightFacade {
                 if(!("OPTIONS" in query)){
                     throw "Invalid OPTIONS";
                 }
+
 
                 cols = QueryOperator.getColumns(options);
                 colTrim = QueryOperator.processColumns(cols, eCaught);

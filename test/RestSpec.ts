@@ -3,7 +3,7 @@ import chaiHttp = require('chai-http');
 import  {expect} from 'chai';
 import InsightFacade from "../src/controller/InsightFacade";
 import {InsightResponse} from "../src/controller/IInsightFacade";
-import Server from "../src/rest/server"
+import Server from "../src/rest/Server"
 
 let fs   = require('fs');
 
