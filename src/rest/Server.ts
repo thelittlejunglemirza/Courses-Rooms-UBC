@@ -6,7 +6,8 @@
 import restify = require('restify');
 
 import Log from "../Util";
-import {InsightResponse} from "../controller/IInsightFacade";
+import {IInsightFacade, InsightResponse} from "../controller/IInsightFacade";
+import InsightFacade from "../controller/InsightFacade";
 
 /**
  * This configures the REST endpoints for the server.
@@ -15,6 +16,7 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
@@ -45,6 +47,7 @@ export default class Server {
      * @returns {Promise<boolean>}
      */
     public start(): Promise<boolean> {
+        let insightFacade : IInsightFacade = new InsightFacade();
         let that = this;
         return new Promise(function (fulfill, reject) {
             try {
@@ -54,10 +57,54 @@ export default class Server {
                     name: 'insightUBC'
                 });
 
+                that.rest.use(restify.bodyParser({mapParams: true, mapFiles: true}));
+
                 // support CORS
                 that.rest.use(function crossOrigin(req, res, next) {
                     res.header("Access-Control-Allow-Origin", "*");
                     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+                    return next();
+                });
+
+                that.rest.put('dataset/:id',function (req: restify.Request, res: restify.Response, next: restify.Next) {
+
+                    let content = new Buffer(req.params.body).toString('base64');
+                    let dataSetName = req.params.id;
+                    insightFacade.addDataset(dataSetName , content).then(function (ret) {
+
+                        Log.info("Adding DataSet:");
+                        res.json(ret.code, ret.body);
+
+                    }).catch(function (err) {
+
+                        res.json(err.code, err.body);
+                    });
+
+                    return next;
+                });
+
+                that.rest.del('dataset/:id' , function (req: restify.Request, res: restify.Response, next: restify.Next) {
+
+                    let dataSetName = req.params.id;
+
+                    insightFacade.removeDataset(dataSetName).then(function (ret) {
+                        Log.info("Adding DataSet:");
+                        res.json(ret.code, ret.body);
+                    }).catch(function (err) {
+                        res.json(err.code, err.body);
+                    });
+
+                    return next;
+                });
+
+                that.rest.post('/query', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                    let query = req.body;
+                    insightFacade.performQuery(query).then(function (ret) {
+                        Log.info("Perform Query");
+                        res.json(ret.code, ret.body);
+                    }).catch(function (err) {
+                        res.json(err.code, err.body);
+                    })
                     return next();
                 });
 
