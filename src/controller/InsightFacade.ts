@@ -83,7 +83,6 @@ export default class InsightFacade implements IInsightFacade {
                 return;
             }
             let options = query["OPTIONS"];
-            // let transformations = query["TRANSFORMATIONS"];
             let colTrim: Array<any> = [];
             let cols: Array<string> = [];
             let transformed: Array<any> = [];
@@ -92,20 +91,28 @@ export default class InsightFacade implements IInsightFacade {
                 let where = query["WHERE"];
 
                 if(Object.keys(where).length == 0) {
-                    throw "Invalid Query";
+                    let dataset = navigator.getDataset(id);
+                    let obj = JSON.parse(dataset);
+                    eCaught = obj;
+                }else {
+                    let root = QueryOperator.processWhere(where);
+                    let dataset = navigator.getDataset(id);
+                    let obj = JSON.parse(dataset);
+                    eCaught = QueryOperator.extractData(obj, root);
                 }
 
-                let root = QueryOperator.processWhere(where);
-                let dataset = navigator.getDataset(id);
-                let obj = JSON.parse(dataset);
-                eCaught = QueryOperator.extractData(obj, root);
                 if(!("OPTIONS" in query)){
                     throw "Invalid OPTIONS";
                 }
-
-
                 cols = QueryOperator.getColumns(options);
-                colTrim = QueryOperator.processColumns(cols, eCaught);
+                if("TRANSFORMATIONS" in query){
+                    let colStrings: Array<string> = QueryOperator.getColumnsStrings(cols);
+                    let transTrim = QueryOperator.processTransformations(query, eCaught, colStrings)
+                    colTrim = QueryOperator.processColumns(cols, transTrim);
+                }else{
+                    QueryOperator.checkColumnsForLegalKey(cols);
+                    colTrim = QueryOperator.processColumns(cols, eCaught);
+                }
             }catch (err){
                 resp.setError(queGenericFail, err);
                 reject(resp.getResponse());

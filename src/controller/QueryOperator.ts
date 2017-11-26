@@ -6,10 +6,14 @@ let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
     "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
     "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
     "rooms_href", "courses_year"];
-
+let Decimal = require('decimal.js');
 // Returns the first item in an Object.
 function first(obj: Object) {
     for (var a in obj) return a;
+}
+
+function firstKey(obj :Object){
+    for(let k of Object.keys(obj)) return k;
 }
 
 // given an array of objects and a key, sort the array base on that key value
@@ -75,15 +79,22 @@ export default class QueryOperator{
         return cols;
     }
 
+    static getColumnsStrings(cols: Array<string>): Array<string>{
+        let colStrings : Array<string> = [];
+        for (let k of cols) {
+            if(legalKeys.indexOf(k) === -1){
+                colStrings.push(k);
+            }
+        }
+        return colStrings;
+    }
+
     // parse the part of query associated and return a modifed data structure accordingly
     static processColumns(cols: Array<string>, extracted: Array<any>): Array<any>{
         let colTrim = [];
         for (let i of extracted) {
             let obj: { [key: string]: any } = {};
             for (let k of cols) {
-                if(legalKeys.indexOf(k) == -1){
-                    throw "Invalid COLUMN";
-                }
                 obj[k] = i[k];
             }
             colTrim.push(obj);
@@ -103,42 +114,183 @@ export default class QueryOperator{
         }
     }
 
+    static processTransformations(query: any, data: Array<any>, colStrings: Array<string>): Array<string>{
+        let trans = query["TRANSFORMATIONS"]
+        let grp = QueryOperator.getGroup(trans);
+        let grpTrim = QueryOperator.processGroup(grp, data);
+        let alyTrim = QueryOperator.processApply(trans, grpTrim, grp, colStrings);
+        return alyTrim;
+    }
+
     // Get the unique set keys from TRANSFORMATIONS
-    static getGroup(trans: {[key:string]: any}): Array<string>{
+    static getGroup(trans: any): Array<string>{
         if(!("GROUP" in trans)){
             throw "Invalid GROUP";
         }
-        let grp = trans["GROUP"];
-        if (grp.length == 0){
+        let grpObject = trans["GROUP"];
+        if (grpObject.length == 0){
             throw "Empty GROUP";
+        }
+        let grp : Array<string> = [];
+        for(let k of grpObject){
+            if(legalKeys.indexOf(k) == -1){
+                throw "Invalid Key in Grp"
+            }
+            grp.push(k);
         }
         return grp;
     }
 
-    // Given an ordered, trimmed column, return grouped results with applied calculations
-    // 1. Get a list of unique sets after scouring colTrim.
-    // 2. For each unique set, look through colTrim. Filter out each from the unique sets.
-    // 3. Apply the calculation to the value selected on each unique set. (Function call)
-    // 4. Write unique sets down with calculated results.
-    static processGroup(grp: Array<string>, colTrim: Array<any>): Array<any>{
-        let grpTrim: Array<any> = [];
-        let uniqueSets: Array<Array<any>> = [];
-                                                                // Where grp = courses_dept
-        for (let i of colTrim) {                                // i = { courses_dept: 'epse', courses_avg: 97.09 }
-            let obj: { [key: string]: any } = {};               // { courses_dept: 'epse', 'AVG': etc. }
-            let uniqueSet: Array<any> = [];                     // List of unique sets
-            for (let k of grp) {                                // k = courses_dept
-                if(legalKeys.indexOf(k) == -1){
-                    throw "Invalid GROUP";
+
+    // return grouped results with applied calculations
+    static processGroup(grpStrArr: Array<string>, data: Array<any>): Array<any>{
+
+        let grpTrim: Array<Array<any>> = [];
+        let uniqueSets: Array<string> = [];
+
+        for (let i of data) {
+            let uniqueSet: string = "";
+            for (let k of grpStrArr) {
+                //let obj: { [key: string]: any } = {k: i[k]};
+                if(typeof i[k] === "string"){
+                    uniqueSet += i[k];
+                }else{
+                    let str = i[k].toString();
+                    uniqueSet += str;
                 }
-                if(i[k] === undefined) throw "Invalid GROUP";   // Group key doesn't match the filtered colTrim's keys
-                uniqueSet.push(i[k]);                           // uniqueSet = ['epse']
+
             }
-            uniqueSets.push(uniqueSet);
+            if(uniqueSets.indexOf(uniqueSet) === -1) {
+                uniqueSets.push(uniqueSet);
+                let grp: Array<any> = [];
+                grp.push(i);
+                for(let j of data){
+                    if(j !== i){
+                        let flag = true;
+                        for(let k of grpStrArr){
+                            if(i[k] !== j[k]){
+                                flag = false
+                            }
+                        }
+                        if(flag === true){
+                            grp.push(j);
+                        }
+                    }
+                }
+                grpTrim.push(grp);
+            }
         }
         return grpTrim;
     }
 
+    static processApply(trans: any, grpTrim: Array<Array<any>>, grpStrArr: Array<string>, colStrings: Array<string>): Array<any>{
+        if(!("APPLY" in trans)){
+            throw "APPLY not Found!";
+        }
+        let apply = trans["APPLY"];
+        let applyKeys = []
+        if (apply.length != 0){
+            for(let alyObject of apply){
+                let key = firstKey(alyObject);
+                applyKeys.push(key);
+                if(colStrings.indexOf(key) === -1){
+                    throw "Invalid Apply String";
+                }
+                let tokenObject = alyObject[key];
+                let token = firstKey(tokenObject);
+                let field = tokenObject[token];
+                if(legalKeys.indexOf(field) === -1){
+                    throw "Invalid Token Field"
+                }
+                for(let grp of grpTrim){
+                    QueryOperator.processToken(token, field, grp, key);
+                }
+
+            }
+        }
+        for(let i of colStrings){
+            if(applyKeys.indexOf(i) === -1){
+                throw "Invalid Column Key That Was Not Used in Apply"
+            }
+        }
+        let alyTrim: Array<any> = [];
+        for(let grp of grpTrim){
+            let first: { [key: string]: any } = grp[0];
+            let newGrpObj: { [key: string]: any } = {}
+            for(let k of Object.keys(first)){
+                if(grpStrArr.indexOf(k) !== -1){
+                    newGrpObj[k] = first[k];
+                }
+            }
+            let last: { [key: string]: any } = grp[grp.length - 1];
+            let key = firstKey(last);
+            if(colStrings.indexOf(key) !== -1){
+                newGrpObj[key] = last[key];
+            }
+            alyTrim.push(newGrpObj);
+        }
+        return alyTrim;
+    }
+
+    static processToken(token: string, field: string, grp: Array<any>, key:string){
+        switch (token){
+            case 'MAX':
+                var max = -1;
+                for(let g of grp){
+                    if(g[field] > max){
+                        max = g[field];
+                    }
+                }
+                var obj: { [key: string]: any } = {};
+                obj[key] = max;
+                grp.push(obj);
+                break;
+            case 'MIN':
+                var min = 99999;
+                for(let g of grp){
+                    if(g[field] < max){
+                        min = g[field];
+                    }
+                }
+                var obj: { [key: string]: any } = {};
+                obj[key] = min;
+                grp.push(obj);
+                break;
+            case 'AVG':
+                var inputArr: Array<number> = [];
+                for(let g of grp){
+                    inputArr.push(g[field]);
+                }
+                var avg = Number((inputArr.map(val => <any>new Decimal(val)).reduce((a,b) => a.plus(b)).toNumber() / inputArr.length).toFixed(2));
+                var obj: { [key: string]: any } = {};
+                obj[key] = avg;
+                grp.push(obj);
+                break;
+            case 'SUM':
+                var inputArr: Array<number> = [];
+                for(let g of grp){
+                    inputArr.push(g[field]);
+                }
+                let sum = Number(inputArr.map(val => new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
+                var obj: { [key: string]: any } = {};
+                obj[key] = sum;
+                grp.push(obj);
+                break;
+            case 'COUNT':
+                break;
+            default:
+                throw "Invalid Token";
+        }
+
+    }
+
+    static checkColumnsForLegalKey(cols: Array<string>){
+        for(let c of cols){
+            if(legalKeys.indexOf(c) === -1){
+                throw "Invalid Column Key When There is no Transformation"
+            }
+        }
+    }
 
     static validateQuery(query: any): string{
         let txt = JSON.stringify(query);

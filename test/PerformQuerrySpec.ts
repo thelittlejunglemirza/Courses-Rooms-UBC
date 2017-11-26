@@ -447,6 +447,7 @@ describe("PerformQuerrySpec", function () {
         }).catch(function (insightResponse: InsightResponse) {
             console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(400);
+            console.log(insightResponse);
         })
 
     });
@@ -572,16 +573,19 @@ describe("PerformQuerrySpec", function () {
 
         return insightFacade.performQuery(d3obj0).then(function(insightResponse: InsightResponse){
             expect(insightResponse.code).to.deep.equal(200);
+            console.log(insightResponse.body);
         }).catch(function(insightResponse: InsightResponse) {
+            console.log(insightResponse);
             expect.fail();
         })
     })
 
-    it("Valid D3-Query B", function () {
+    it.only("Valid D3-Query B", function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(d3obj1).then(function(insightResponse: InsightResponse){
             expect(insightResponse.code).to.deep.equal(200);
+            console.log(insightResponse.body);
         }).catch(function(insightResponse: InsightResponse) {
             expect.fail();
         })
@@ -596,5 +600,18 @@ describe("PerformQuerrySpec", function () {
             expect(insightResponse.code).to.deep.equal(400);
         })
     })
+
+    it ("Empty WHERE" , function () {
+        this.timeout(10000);
+        let data26 = fs.readFileSync('test/Queries/query26.txt');
+        let obj26 = JSON.parse(data26);
+        return insightFacade.performQuery(obj26).then(function(insightResponse: InsightResponse){
+            expect(insightResponse.code).to.deep.equal(200);
+            console.log(insightResponse.body);
+        }).catch(function (insightResponse: InsightResponse) {
+            expect.fail();
+        })
+
+    });
 
 });

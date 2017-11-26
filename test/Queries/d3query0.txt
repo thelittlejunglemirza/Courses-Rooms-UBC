@@ -1,25 +1,17 @@
 {
-
     "WHERE": {
-
-        "AND": [{
-
+        "AND": [
+        {
             "IS": {
-
                 "rooms_furniture": "*Tables*"
-
             }
-
-        }, {
-
+        },
+        {
             "GT": {
-
                 "rooms_seats": 300
-
             }
-
-        }]
-
+        }
+        ]
     },
 
     "OPTIONS": {
@@ -30,15 +22,7 @@
 
             "maxSeats"
 
-        ],
-
-        "ORDER": {
-
-            "dir": "DOWN",
-
-            "keys": ["maxSeats"]
-
-        }
+        ]
 
     },
 
@@ -50,7 +34,7 @@
 
             "maxSeats": {
 
-                "MAX": "rooms_seats"
+                "SUM": "rooms_seats"
 
             }
 
