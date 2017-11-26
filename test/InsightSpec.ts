@@ -25,7 +25,7 @@ describe("InsightSpec", function () {
         insightFacade = null;
     });
 
-    it.only ("removing a dataset when directory does not exist with code 404 will fail" , function () {
+    it ("removing a dataset when directory does not exist with code 404 will fail" , function () {
         this.timeout(10000);
         return insightFacade.removeDataset("11").then(function(insightResponse: InsightResponse){
             expect.fail();

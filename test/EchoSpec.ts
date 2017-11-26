@@ -10,7 +10,7 @@ import chai = require('chai');
 import chaiHttp = require('chai-http');
 import Response = ChaiHttp.Response;
 import restify = require('restify');
-
+let fs = require('fs');
 describe("EchoSpec", function () {
 
 
@@ -26,6 +26,7 @@ describe("EchoSpec", function () {
 
     beforeEach(function () {
         Log.test('BeforeTest: ' + (<any>this).currentTest.title);
+
     });
 
     after(function () {
@@ -68,45 +69,122 @@ describe("EchoSpec", function () {
         expect(out.body).to.have.property('error');
         expect(out.body).to.deep.equal({error: 'Message not provided'});
     });
-    it("Test Server", function() {
+
+
+    it("Start server and stop it", function () {
+
+        this.timeout(8000);
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://localhost:4321";
+
+        return server.start().then(()=>{
+            server.stop();
+        });
+
+    });
+
+
+    it("addDataset Test", function () {
+
+        this.timeout(8000);
 
         // Init
         chai.use(chaiHttp);
         let server = new Server(4321);
-        let URL = "http://127.0.0.1:4321";
-
+        let URL = "http://localhost:4321";
         // Test
         expect(server).to.not.equal(undefined);
-        try{
+        try {
             Server.echo((<restify.Request>{}), null, null);
             expect.fail()
-        } catch(err) {
+        } catch (err) {
             expect(err.message).to.equal("Cannot read property 'json' of null");
         }
 
-        return server.start().then(function(success: boolean) {
+        return server.start().then(function (success: boolean) {
             return chai.request(URL)
-                .get("/")
-        }).catch(function(err) {
+                .put('/dataset/courses')
+                .attach("body", fs.readFileSync("test/Datasets/courses.zip"), "courses.zip")
+                .then(function (res: Response) {
+                    Log.trace('rooms added successfully');
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    expect.fail();
+                });
+
+        }).catch(function (err) {
+            console.log(err);
             expect.fail()
-        }).then(function(res: Response) {
-            expect(res.status).to.be.equal(200);
-            return chai.request(URL)
-                .get("/echo/Hello")
-        }).catch(function(err) {
-            expect.fail()
-        }).then(function(res: Response) {
-            expect(res.status).to.be.equal(200);
-            return server.start()
-        }).then(function(success: boolean) {
-            expect.fail();
-        }).catch(function(err) {
-            expect(err.code).to.equal('EADDRINUSE');
-            return server.stop();
-        }).catch(function(err) {
-            expect.fail();
         });
+
     });
 
+    it("performQuery: send post request", function () {
+
+        this.timeout(10000);
+
+        // Init
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://localhost:4321";
+        // Test
+        expect(server).to.not.equal(undefined);
+        try {
+            Server.echo((<restify.Request>{}), null, null);
+            expect.fail()
+        } catch (err) {
+            expect(err.message).to.equal("Cannot read property 'json' of null");
+        }
+
+        let query = fs.readFileSync("./test/Queries/aggQ1.txt");
+        let queryJsonObject = JSON.parse(query);
+        return chai.request(URL)
+            .post('/query')
+            .send(queryJsonObject)
+            .then(function (res: Response) {
+                Log.trace('performQuery happened correctly');
+            })
+            .catch(function (err) {
+                console.log(err);
+                //Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
+
+    });
+
+
+    it("removeDataset: send DELETE request", function () {
+
+
+        // Init
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://localhost:4321";
+        // Test
+        expect(server).to.not.equal(undefined);
+        try {
+            Server.echo((<restify.Request>{}), null, null);
+            expect.fail()
+        } catch (err) {
+            expect(err.message).to.equal("Cannot read property 'json' of null");
+        }
+        return chai.request(URL)
+            .del('/dataset/courses')
+            .then(function (res: Response) {
+                Log.trace('removeDataset happened correctly');
+
+            })
+            .catch(function (err) {
+                console.log(err);
+                //Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
+
+
+    });
 
 });

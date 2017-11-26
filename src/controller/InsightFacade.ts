@@ -130,7 +130,7 @@ export default class InsightFacade implements IInsightFacade {
 
             res["result"] = colTrim;
             resp.setFulfill(queSuccess, res);
-            //navigator.writeResultToFile(res);
+            navigator.writeResultToFile(res);
             fulfill(resp.getResponse());
         });
     }

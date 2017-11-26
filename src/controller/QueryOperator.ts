@@ -1,6 +1,7 @@
 import {ASTNode} from "../AST/ASTNode";
 import {Tree} from "../AST/Tree";
 import {isArray} from "util";
+import {authorizationParser} from "restify";
 
 let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
     "courses_instructor", "courses_title", "courses_pass",
@@ -22,6 +23,36 @@ function sort(key: any, arr: Array<any>){
     return arr.sort(function(a, b) {
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+
+function settleUp(a:any, b:any, keys: Array<string>): number{
+    for(let k of keys){
+        if(a[k] < b[k]) return -1;
+        if(a[k] > b[k]) return 1;
+    }
+    return 0;
+}
+
+function settleDown(a:any, b:any, keys: Array<string>): number{
+    for(let k of keys){
+        if(a[k] > b[k]) return -1;
+        if(a[k] < b[k]) return 1;
+    }
+    return 0;
+}
+
+function sortUp(keys: Array<string>, arr: Array<any>){
+    return arr.sort(function(a, b) {
+        var x = a[keys[0]]; var y = b[keys[0]];
+        return ((x < y) ? -1 : ((x > y) ? 1 : settleUp(a,b, keys)));
+    });
+}
+
+function sortDown(key: any, arr: Array<any>){
+    return arr.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? 1 : ((x > y) ? -1 : 0));
     });
 }
 
@@ -107,12 +138,16 @@ export default class QueryOperator{
     static processOrder(options: {[key:string]: any}, cols: Array<string>, colTrim: Array<any>){
         if("ORDER" in options) {
             let order = options["ORDER"];
-            if(isArray(order)){
-                let x = order["keys"];
-                if (x.length === 1){
-                    sort(x[0], colTrim);
-                }else{//TODO: for sorting on more than one column
+            if(typeof(order) === "object"){
+                if(order["dir"] === "UP"){
+                    let keys = order["keys"];
+                    sortUp(keys, colTrim);
 
+                }else if(order["dir"] === "DOWN"){
+                    let keys = order["keys"];
+                    sortDown(keys, colTrim);
+                }else {
+                    throw "invalid order direction"
                 }
             }else {
                 if (cols.indexOf(order) == -1) {
@@ -226,16 +261,17 @@ export default class QueryOperator{
         let alyTrim: Array<any> = [];
         for(let grp of grpTrim){
             let first: { [key: string]: any } = grp[0];
-            let newGrpObj: { [key: string]: any } = {}
+            let newGrpObj: { [key: string]: any } = {};
             for(let k of Object.keys(first)){
                 if(grpStrArr.indexOf(k) !== -1){
                     newGrpObj[k] = first[k];
                 }
             }
-            let last: { [key: string]: any } = grp[grp.length - 1];
-            let key = firstKey(last);
-            if(colStrings.indexOf(key) !== -1){
-                newGrpObj[key] = last[key];
+            for(let l of grp){
+                let key = firstKey(l);
+                if(colStrings.indexOf(key) !== -1){
+                    newGrpObj[key] = l[key];
+                }
             }
             alyTrim.push(newGrpObj);
         }
@@ -258,7 +294,7 @@ export default class QueryOperator{
             case 'MIN':
                 var min = 99999;
                 for(let g of grp){
-                    if(g[field] < max){
+                    if(g[field] < min){
                         min = g[field];
                     }
                 }

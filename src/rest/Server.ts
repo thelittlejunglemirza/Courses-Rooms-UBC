@@ -8,7 +8,6 @@ import restify = require('restify');
 import Log from "../Util";
 import {IInsightFacade, InsightResponse} from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
-import {fullResponse} from "restify";
 
 /**
  * This configures the REST endpoints for the server.
@@ -17,11 +16,12 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
-
+    private insFacade: InsightFacade;
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
+        this.insFacade = new InsightFacade();
     }
 
     /**
@@ -48,11 +48,10 @@ export default class Server {
      * @returns {Promise<boolean>}
      */
     public start(): Promise<boolean> {
-        let insightFacade : IInsightFacade = new InsightFacade();
         let that = this;
         return new Promise(function (fulfill, reject) {
             try {
-                Log.info('Server::start() - start');
+                //Log.info('Server::start() - start');
 
                 that.rest = restify.createServer({
                     name: 'insightUBC'
@@ -67,71 +66,83 @@ export default class Server {
                     return next();
                 });
 
-                that.rest.put('dataset/:id',function (req: restify.Request, res: restify.Response, next: restify.Next) {
-
-                    let content = new Buffer(req.params.body).toString('base64');
-                    let dataSetName = req.params.id;
-                    insightFacade.addDataset(dataSetName , content).then(function (ret) {
-
-                        Log.info("Adding DataSet:");
-                        fulfill(res.json(ret.code, ret.body));
-
-                    }).catch(function (err) {
-
-                        res.json(err.code, err.body);
-                    });
-
-                    return next;
-                });
-
-                that.rest.del('dataset/:id' , function (req: restify.Request, res: restify.Response, next: restify.Next) {
-
-                    let dataSetName = req.params.id;
-
-                    insightFacade.removeDataset(dataSetName).then(function (ret) {
-                        Log.info("Adding DataSet:");
-                        fulfill(res.json(ret.code, ret.body));
-                    }).catch(function (err) {
-                        res.json(err.code, err.body);
-                    });
-
-                    return next;
-                });
-
-                that.rest.post('/query', function (req: restify.Request, res: restify.Response, next: restify.Next) {
-                    let query = req.body;
-                    insightFacade.performQuery(query).then(function (ret) {
-                        Log.info("Perform Query");
-                        fulfill(res.json(ret.code, ret.body));
-                    }).catch(function (err) {
-                        res.json(err.code, err.body);
-                    });
-                    return next();
-                });
-
                 that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
-                    res.send(200);
-                    return next();
+                    res.send(200); return next();
                 });
+
 
                 // provides the echo service
                 // curl -is  http://localhost:4321/echo/myMessage
                 that.rest.get('/echo/:msg', Server.echo);
 
+                // provides the echo service
+                // curl -is  http://localhost:4321/echo/myMessage
+                that.rest.get('/echo/:msg', Server.echo);
+
+                //D3 implementation of REST
+
+                // curl localhost:4321/dataset/courses --upload-file courses.zip
+
+                let insightFacade: IInsightFacade = new InsightFacade();
+
+
+                that.rest.put('/dataset/:id', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+
+                    var id: string = req.params.id;
+
+                    let dataStr = new Buffer(req.params.body).toString('base64');
+                    insightFacade.addDataset(id, dataStr).then(function (result) {
+                        fulfill(res.json(result.code, result.body));
+
+                    }).catch(function (error) {
+                        reject(res.json(error.code, error.body));
+                    });
+                    return next();
+                });
+
+
+                // curl -X DELETE localhost:4321/dataset/courses
+                that.rest.del('/dataset/:id', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                    let insightFacade: IInsightFacade = new InsightFacade;
+
+                    var id: string = req.params.id;
+
+                    insightFacade.removeDataset(id).then(function (result) {
+                        fulfill(res.json(result.code, result.body));
+
+                    }).catch(function (error) {
+                        reject(res.json(error.code, error.body));
+                    });
+                    return next();
+                });
+
+                that.rest.post('/query', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                    let query: any = req.params;
+                    let insightFacade: IInsightFacade = new InsightFacade;
+                    insightFacade.performQuery(query).then(function (result) {
+                        fulfill(res.json(result.code, result.body));
+
+                    }).catch(function (error) {
+                        //Log.info("we are getting here");
+                        reject(res.json(error.code, error.body));
+                    })
+                });
+
+
                 // Other endpoints will go here
 
+
                 that.rest.listen(that.port, function () {
+
                     Log.info('Server::start() - restify listening: ' + that.rest.url);
                     fulfill(true);
                 });
 
                 that.rest.on('error', function (err: string) {
-                    // catches errors in restify start; unusual syntax due to internal node not using normal exceptions here
-                    Log.info('Server::start() - restify ERROR: ' + err);
                     reject(err);
                 });
             } catch (err) {
-                Log.error('Server::start() - ERROR: ' + err);
+                //Log.error('Server::start() - ERROR: ' + err);
                 reject(err);
             }
         });
@@ -145,6 +156,7 @@ export default class Server {
         Log.trace('Server::echo(..) - params: ' + JSON.stringify(req.params));
         try {
             let result = Server.performEcho(req.params.msg);
+
             Log.info('Server::echo(..) - responding ' + result.code);
             res.json(result.code, result.body);
         } catch (err) {
@@ -156,6 +168,7 @@ export default class Server {
 
     public static performEcho(msg: string): InsightResponse {
         if (typeof msg !== 'undefined' && msg !== null) {
+            //return new InsightFacade().performQuery()
             return {code: 200, body: {message: msg + '...' + msg}};
         } else {
             return {code: 400, body: {error: 'Message not provided'}};
