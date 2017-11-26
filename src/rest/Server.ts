@@ -8,6 +8,7 @@ import restify = require('restify');
 import Log from "../Util";
 import {IInsightFacade, InsightResponse} from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
+import {fullResponse} from "restify";
 
 /**
  * This configures the REST endpoints for the server.
@@ -73,7 +74,7 @@ export default class Server {
                     insightFacade.addDataset(dataSetName , content).then(function (ret) {
 
                         Log.info("Adding DataSet:");
-                        res.json(ret.code, ret.body);
+                        fulfill(res.json(ret.code, ret.body));
 
                     }).catch(function (err) {
 
@@ -89,7 +90,7 @@ export default class Server {
 
                     insightFacade.removeDataset(dataSetName).then(function (ret) {
                         Log.info("Adding DataSet:");
-                        res.json(ret.code, ret.body);
+                        fulfill(res.json(ret.code, ret.body));
                     }).catch(function (err) {
                         res.json(err.code, err.body);
                     });
@@ -101,10 +102,10 @@ export default class Server {
                     let query = req.body;
                     insightFacade.performQuery(query).then(function (ret) {
                         Log.info("Perform Query");
-                        res.json(ret.code, ret.body);
+                        fulfill(res.json(ret.code, ret.body));
                     }).catch(function (err) {
                         res.json(err.code, err.body);
-                    })
+                    });
                     return next();
                 });
 

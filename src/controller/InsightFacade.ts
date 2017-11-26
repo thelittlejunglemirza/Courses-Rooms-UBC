@@ -85,7 +85,6 @@ export default class InsightFacade implements IInsightFacade {
             let options = query["OPTIONS"];
             let colTrim: Array<any> = [];
             let cols: Array<string> = [];
-            let transformed: Array<any> = [];
 
             try{
                 let where = query["WHERE"];
