@@ -281,48 +281,79 @@ export default class QueryOperator{
     static processToken(token: string, field: string, grp: Array<any>, key:string){
         switch (token){
             case 'MAX':
-                var max = -1;
-                for(let g of grp){
-                    if(g[field] > max){
-                        max = g[field];
+                try {
+                    var max = -1;
+                    for (let g of grp) {
+                        if (g[field] > max) {
+                            max = g[field];
+                        }
                     }
+                    var obj: { [key: string]: any } = {};
+                    obj[key] = max;
+                    grp.push(obj);
+                }catch (err){
+                    throw "Invalid Max";
                 }
-                var obj: { [key: string]: any } = {};
-                obj[key] = max;
-                grp.push(obj);
                 break;
             case 'MIN':
-                var min = 99999;
-                for(let g of grp){
-                    if(g[field] < min){
-                        min = g[field];
+                try {
+                    var min = 99999;
+                    for (let g of grp) {
+                        if (g[field] < min) {
+                            min = g[field];
+                        }
                     }
+                    var obj: { [key: string]: any } = {};
+                    obj[key] = min;
+                    grp.push(obj);
+                }catch (err){
+                    throw "Invalid Min"
                 }
-                var obj: { [key: string]: any } = {};
-                obj[key] = min;
-                grp.push(obj);
                 break;
             case 'AVG':
-                var inputArr: Array<number> = [];
-                for(let g of grp){
-                    inputArr.push(g[field]);
+                try {
+                    var inputArr: Array<number> = [];
+                    for (let g of grp) {
+                        inputArr.push(g[field]);
+                    }
+                    var avg = Number((inputArr.map(val => <any>new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber() / inputArr.length).toFixed(2));
+                    var obj: { [key: string]: any } = {};
+                    obj[key] = avg;
+                    grp.push(obj);
+                }catch (err){
+                    throw "Invalid Avg";
                 }
-                var avg = Number((inputArr.map(val => <any>new Decimal(val)).reduce((a,b) => a.plus(b)).toNumber() / inputArr.length).toFixed(2));
-                var obj: { [key: string]: any } = {};
-                obj[key] = avg;
-                grp.push(obj);
                 break;
             case 'SUM':
-                var inputArr: Array<number> = [];
-                for(let g of grp){
-                    inputArr.push(g[field]);
+                try {
+                    var inputArr: Array<number> = [];
+                    for (let g of grp) {
+                        inputArr.push(g[field]);
+                    }
+                    let sum = Number(inputArr.map(val => new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
+                    var obj: { [key: string]: any } = {};
+                    obj[key] = sum;
+                    grp.push(obj);
+                }catch (err){
+                    throw "Invalid Sum";
                 }
-                let sum = Number(inputArr.map(val => new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
-                var obj: { [key: string]: any } = {};
-                obj[key] = sum;
-                grp.push(obj);
                 break;
             case 'COUNT':
+                try {
+                    var count = 0;
+                    var fieldArr: Array<any> = [];
+                    for (let g of grp){
+                        if(fieldArr.indexOf(g[field]) === -1){
+                            count ++;
+                            fieldArr.push(g[field]);
+                        }
+                    }
+                    var obj: { [key: string]: any } = {};
+                    obj[key] = count;
+                    grp.push(obj);
+                }catch (err){
+                    throw "Invalid Count"
+                }
                 break;
             default:
                 throw "Invalid Token";
