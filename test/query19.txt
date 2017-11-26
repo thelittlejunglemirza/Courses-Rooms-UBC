@@ -1,7 +1,0 @@
-{
-  "WHERE":{
-     "EQ":{
-        "courses_avg":97
-     }
-  }
-}
