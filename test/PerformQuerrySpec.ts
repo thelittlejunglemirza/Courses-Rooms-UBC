@@ -87,6 +87,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+    /*
     it("test if perform query gets to WHERE second time" , function () {
         this.timeout(10000);
 
@@ -100,6 +101,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+    */
 
 
     it("test if perform query all courses with same department" , function () {
@@ -437,7 +439,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-
+    /*
     it ("Erroneous Query Key, Empty WHERE" , function () {
         this.timeout(10000);
         let data26 = fs.readFileSync('test/Queries/query26.txt');
@@ -451,6 +453,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+    */
 
     it ("Erroneous Query Key, Empty IS" , function () {
         this.timeout(10000);
@@ -567,7 +570,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-
+    /*
     it("Valid D3-Query A", function () {
         this.timeout(10000);
 
@@ -580,7 +583,7 @@ describe("PerformQuerrySpec", function () {
         })
     })
 
-    it.only("Valid D3-Query B", function () {
+    it("Valid D3-Query B", function () {
         this.timeout(10000);
 
         return insightFacade.performQuery(d3obj1).then(function(insightResponse: InsightResponse){
@@ -600,7 +603,8 @@ describe("PerformQuerrySpec", function () {
             expect(insightResponse.code).to.deep.equal(400);
         })
     })
-
+    */
+    /*
     it ("Empty WHERE" , function () {
         this.timeout(10000);
         let data26 = fs.readFileSync('test/Queries/query26.txt');
@@ -613,5 +617,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
+    */
 
 });

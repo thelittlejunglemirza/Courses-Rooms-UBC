@@ -1,5 +1,6 @@
 import {ASTNode} from "../AST/ASTNode";
 import {Tree} from "../AST/Tree";
+import {isArray} from "util";
 
 let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
     "courses_instructor", "courses_title", "courses_pass",
@@ -106,10 +107,19 @@ export default class QueryOperator{
     static processOrder(options: {[key:string]: any}, cols: Array<string>, colTrim: Array<any>){
         if("ORDER" in options) {
             let order = options["ORDER"];
-            if (cols.indexOf(order) == -1) {
-                throw "Invalid ORDER";
-            } else {
-                sort(order, colTrim);
+            if(isArray(order)){
+                let x = order["keys"];
+                if (x.length === 1){
+                    sort(x[0], colTrim);
+                }else{//TODO: for sorting on more than one column
+
+                }
+            }else {
+                if (cols.indexOf(order) == -1) {
+                    throw "Invalid ORDER";
+                } else {
+                    sort(order, colTrim);
+                }
             }
         }
     }
