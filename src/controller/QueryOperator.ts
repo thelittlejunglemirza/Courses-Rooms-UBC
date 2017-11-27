@@ -2,13 +2,26 @@ import {ASTNode} from "../AST/ASTNode";
 import {Tree} from "../AST/Tree";
 import {isArray} from "util";
 import {authorizationParser} from "restify";
+let Decimal = require('decimal.js');
 
 let legalKeys: Array<string> =["courses_dept", "courses_id", "courses_avg",
     "courses_instructor", "courses_title", "courses_pass",
     "courses_fail", "courses_audit", "courses_uuid", "rooms_fullname", "rooms_shortname", "rooms_number",
     "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_type", "rooms_furniture",
     "rooms_href", "courses_year"];
-let Decimal = require('decimal.js');
+
+let legalKeysWithTypes: { [key:string] : string } =
+    {"courses_dept": "string",              "courses_id": "string",              "courses_avg": "number",
+        "courses_instructor": "string",        "courses_title": "string",           "courses_pass": "number",
+        "courses_fail": "number",              "courses_audit": "number",           "courses_uuid": "string",
+        "rooms_fullname": "string",            "rooms_shortname": "string",         "rooms_number": "string",
+        "rooms_name": "string",                "rooms_address": "string",           "rooms_lat": "number",
+        "rooms_lon": "number",                 "rooms_seats": "number",             "rooms_type": "string",
+        "rooms_furniture": "string",           "rooms_href": "string",              "courses_year": "number"};
+
+
+
+
 // Returns the first item in an Object.
 function first(obj: Object) {
     for (var a in obj) return a;
@@ -279,16 +292,20 @@ export default class QueryOperator{
     }
 
     static processToken(token: string, field: string, grp: Array<any>, key:string){
+        var obj: { [key: string]: any } = {};
+
         switch (token){
             case 'MAX':
                 try {
-                    var max = -1;
+                    if(legalKeysWithTypes[field] !== "number"){
+                        throw "Not a number field in Max";
+                    }
+                    let max = -1;
                     for (let g of grp) {
                         if (g[field] > max) {
                             max = g[field];
                         }
                     }
-                    var obj: { [key: string]: any } = {};
                     obj[key] = max;
                     grp.push(obj);
                 }catch (err){
@@ -297,27 +314,31 @@ export default class QueryOperator{
                 break;
             case 'MIN':
                 try {
-                    var min = 99999;
+                    if(legalKeysWithTypes[field] !== "number"){
+                        throw "Not a number field in Min";
+                    }
+                    let min = 99999;
                     for (let g of grp) {
                         if (g[field] < min) {
                             min = g[field];
                         }
                     }
-                    var obj: { [key: string]: any } = {};
                     obj[key] = min;
                     grp.push(obj);
                 }catch (err){
-                    throw "Invalid Min"
+                    throw "Invalid Min";
                 }
                 break;
             case 'AVG':
                 try {
-                    var inputArr: Array<number> = [];
-                    for (let g of grp) {
-                        inputArr.push(g[field]);
+                    if(legalKeysWithTypes[field] !== "number"){
+                        throw "Not a number field in Avg";
                     }
-                    var avg = Number((inputArr.map(val => <any>new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber() / inputArr.length).toFixed(2));
-                    var obj: { [key: string]: any } = {};
+                    let inputArrAvg: Array<number> = [];
+                    for (let g of grp) {
+                        inputArrAvg.push(g[field]);
+                    }
+                    let avg = Number((inputArrAvg.map(val => <any>new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber() / inputArrAvg.length).toFixed(2));
                     obj[key] = avg;
                     grp.push(obj);
                 }catch (err){
@@ -326,12 +347,17 @@ export default class QueryOperator{
                 break;
             case 'SUM':
                 try {
-                    var inputArr: Array<number> = [];
+                    if(legalKeysWithTypes[field] !== "number"){
+                        throw "Not a number field in Sum";
+                    }
+                    let inputArr: Array<number> = [];
                     for (let g of grp) {
-                        inputArr.push(g[field]);
+                        if(typeof(g[field]) === "number"){
+                            inputArr.push(g[field]);
+                        }
+
                     }
                     let sum = Number(inputArr.map(val => new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
-                    var obj: { [key: string]: any } = {};
                     obj[key] = sum;
                     grp.push(obj);
                 }catch (err){
@@ -340,19 +366,18 @@ export default class QueryOperator{
                 break;
             case 'COUNT':
                 try {
-                    var count = 0;
-                    var fieldArr: Array<any> = [];
-                    for (let g of grp){
-                        if(fieldArr.indexOf(g[field]) === -1){
-                            count ++;
+                    let count = 0;
+                    let fieldArr: Array<any> = [];
+                    for (let g of grp) {
+                        if (fieldArr.indexOf(g[field]) === -1) {
+                            count++;
                             fieldArr.push(g[field]);
                         }
                     }
-                    var obj: { [key: string]: any } = {};
                     obj[key] = count;
                     grp.push(obj);
                 }catch (err){
-                    throw "Invalid Count"
+                    throw "Invalid Count";
                 }
                 break;
             default:
