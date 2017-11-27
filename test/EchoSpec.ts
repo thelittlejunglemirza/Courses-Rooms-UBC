@@ -155,6 +155,41 @@ describe("EchoSpec", function () {
 
     });
 
+    it("performQuery: send post request, Key in apply is not in column", function () {
+
+        this.timeout(10000);
+
+        // Init
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://localhost:4321";
+        // Test
+        expect(server).to.not.equal(undefined);
+        try {
+            Server.echo((<restify.Request>{}), null, null);
+            expect.fail()
+        } catch (err) {
+            expect(err.message).to.equal("Cannot read property 'json' of null");
+        }
+
+        let query = fs.readFileSync("./test/Queries/aggQ2.txt");
+        let queryJsonObject = JSON.parse(query);
+        return chai.request(URL)
+            .post('/query')
+            .send(queryJsonObject)
+            .then(function (res: Response) {
+                Log.trace('performQuery happened correctly');
+            })
+            .catch(function (err) {
+                console.log(err);
+                //Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
+
+    });
+
+
 
     it("removeDataset: send DELETE request", function () {
 

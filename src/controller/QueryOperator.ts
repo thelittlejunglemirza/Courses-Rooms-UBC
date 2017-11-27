@@ -251,9 +251,6 @@ export default class QueryOperator{
             for(let alyObject of apply){
                 let key = firstKey(alyObject);
                 applyKeys.push(key);
-                if(colStrings.indexOf(key) === -1){
-                    throw "Invalid Apply String";
-                }
                 let tokenObject = alyObject[key];
                 let token = firstKey(tokenObject);
                 let field = tokenObject[token];
@@ -264,6 +261,11 @@ export default class QueryOperator{
                     QueryOperator.processToken(token, field, grp, key);
                 }
 
+            }
+           for(let s of colStrings){
+                if(applyKeys.indexOf(s) === -1){
+                    throw "Unused String in Column";
+                }
             }
         }
         for(let i of colStrings){
