@@ -172,9 +172,16 @@ export default class QueryOperator{
         }
     }
 
-    static processTransformations(query: any, data: Array<any>, colStrings: Array<string>): Array<string>{
+    static processTransformations(query: any, data: Array<any>, colStrings: Array<string>, cols: Array<string>): Array<string>{
         let trans = query["TRANSFORMATIONS"]
         let grp = QueryOperator.getGroup(trans);
+        for(let c of cols){
+            if(legalKeys.indexOf(c) !== -1){
+                if(grp.indexOf(c) === -1){
+                    throw "Invalid Query, Key in Column not in Group";
+                }
+            }
+        }
         let grpTrim = QueryOperator.processGroup(grp, data);
         let alyTrim = QueryOperator.processApply(trans, grpTrim, grp, colStrings);
         return alyTrim;

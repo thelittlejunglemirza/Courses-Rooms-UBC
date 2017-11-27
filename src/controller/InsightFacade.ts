@@ -106,7 +106,7 @@ export default class InsightFacade implements IInsightFacade {
                 cols = QueryOperator.getColumns(options);
                 if("TRANSFORMATIONS" in query){
                     let colStrings: Array<string> = QueryOperator.getColumnsStrings(cols);
-                    let transTrim = QueryOperator.processTransformations(query, eCaught, colStrings)
+                    let transTrim = QueryOperator.processTransformations(query, eCaught, colStrings, cols)
                     colTrim = QueryOperator.processColumns(cols, transTrim);
                 }else{
                     QueryOperator.checkColumnsForLegalKey(cols);

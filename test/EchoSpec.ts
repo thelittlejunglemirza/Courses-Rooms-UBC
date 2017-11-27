@@ -189,6 +189,38 @@ describe("EchoSpec", function () {
 
     });
 
+    it("performQuery: send post request, Key Column but not in Group should FAIL", function () {
+
+        this.timeout(10000);
+
+        // Init
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://localhost:4321";
+        // Test
+        expect(server).to.not.equal(undefined);
+        try {
+            Server.echo((<restify.Request>{}), null, null);
+            expect.fail()
+        } catch (err) {
+            expect(err.message).to.equal("Cannot read property 'json' of null");
+        }
+
+        let query = fs.readFileSync("./test/Queries/aggQ3.txt");
+        let queryJsonObject = JSON.parse(query);
+        return chai.request(URL)
+            .post('/query')
+            .send(queryJsonObject)
+            .then(function (res: Response) {
+                expect.fail();
+            })
+            .catch(function (err) {
+                Log.trace('error was caught');
+                console.log(err);
+            });
+
+    });
+
 
 
     it("removeDataset: send DELETE request", function () {
