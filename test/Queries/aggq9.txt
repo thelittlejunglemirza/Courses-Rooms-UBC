@@ -1,0 +1,36 @@
+{
+    "WHERE": {
+        "AND": [{
+            "IS": {
+                "rooms_furniture": "*Tables*"
+            }
+        }, {
+            "GT": {
+                "rooms_seats": 300
+            }
+        }]
+    },
+    "OPTIONS": {
+        "COLUMNS": [
+            "rooms_shortname",
+
+            "roomsKossher"
+        ]
+    },
+    "TRANSFORMATIONS":{
+        "GROUP": ["rooms_shortname"],
+        "APPLY": [
+            {
+               "roomsKossher":{
+                    "COUNT": "rooms_number"
+               }
+            },
+            {
+               "roomsKossher":{
+                    "MAX": "rooms_seats"
+               }
+            }
+        ]
+
+    }
+}

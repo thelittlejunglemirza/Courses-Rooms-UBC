@@ -1,0 +1,56 @@
+{
+	"WHERE": {
+		"AND": [
+			{
+				"IS": {
+					"courses_dept": "math"
+				}
+			},
+			{
+				"GT": {
+					"courses_avg": 90
+				}
+			}
+
+
+		]
+	},
+	"OPTIONS": {
+		"COLUMNS": [
+			"courses_dept",
+			"courses_avg",
+			"AvgAvg",
+			"sumAvg",
+			"minYear"
+		],
+		"ORDER": {
+			"dir": "UP",
+			"keys": [
+				"courses_dept",
+				"courses_avg"
+			]
+		}
+	},
+	"TRANSFORMATIONS": {
+		"GROUP": [
+		],
+		"APPLY": [
+			{
+				"AvgAvg": {
+					"COUNT": "courses_avg"
+				}
+			},
+			{
+				"sumAvg": {
+					"SUM": "courses_avg"
+				}
+			},
+			{
+            				"minYear": {
+            					"MIN": "courses_year"
+            				}
+            			}
+
+		]
+	}
+}

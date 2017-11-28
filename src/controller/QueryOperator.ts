@@ -152,12 +152,16 @@ export default class QueryOperator{
         if("ORDER" in options) {
             let order = options["ORDER"];
             if(typeof(order) === "object"){
+                let keys = order["keys"];
+                for(let k of keys){
+                    if(cols.indexOf(k) === -1){
+                        throw "Key in Sort is not in Columns";
+                    }
+                }
                 if(order["dir"] === "UP"){
-                    let keys = order["keys"];
                     sortUp(keys, colTrim);
 
                 }else if(order["dir"] === "DOWN"){
-                    let keys = order["keys"];
                     sortDown(keys, colTrim);
                 }else {
                     throw "invalid order direction"
@@ -198,7 +202,7 @@ export default class QueryOperator{
         }
         let grp : Array<string> = [];
         for(let k of grpObject){
-            if(legalKeys.indexOf(k) == -1){
+            if(legalKeys.indexOf(k) === -1){
                 throw "Invalid Key in Grp"
             }
             grp.push(k);
@@ -246,6 +250,9 @@ export default class QueryOperator{
         if (apply.length != 0){
             for(let alyObject of apply){
                 let key = firstKey(alyObject);
+                if(applyKeys.indexOf(key) !== -1){
+                    throw "Duplicate Apply Key";
+                }
                 applyKeys.push(key);
                 let tokenObject = alyObject[key];
                 let token = firstKey(tokenObject);
@@ -257,11 +264,6 @@ export default class QueryOperator{
                     QueryOperator.processToken(token, field, grp, key);
                 }
 
-            }
-           for(let s of colStrings){
-                if(applyKeys.indexOf(s) === -1){
-                    throw "Unused String in Column";
-                }
             }
         }
         for(let i of colStrings){

@@ -1,0 +1,50 @@
+{
+	"WHERE": {
+	},
+	"OPTIONS": {
+		"COLUMNS": [
+			"courses_dept",
+			"courses_pass",
+			"courses_id",
+			"courses_avg",
+			"courses_audit",
+			"AvgAvg",
+			"sumAvg"
+		],
+		"ORDER": {
+			"dir": "DOWN",
+			"keys": [
+				"courses_dept",
+				"courses_pass"
+			]
+		}
+	},
+	"TRANSFORMATIONS": {
+		"GROUP": [
+			"courses_dept",
+            "courses_avg",
+            "courses_id",
+            "courses_audit",
+            "courses_fail",
+            "courses_pass"
+		],
+		"APPLY": [
+			{
+				"AvgAvg": {
+					"COUNT": "courses_avg"
+				}
+			},
+			{
+				"sumAvg": {
+					"SUM": "courses_avg"
+				}
+			},
+			{
+            	"minYear": {
+         			"MIN": "courses_year"
+         		}
+          	}
+
+		]
+	}
+}

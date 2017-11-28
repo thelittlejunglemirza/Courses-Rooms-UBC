@@ -87,21 +87,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-    /*
-    it("test if perform query gets to WHERE second time" , function () {
-        this.timeout(10000);
 
-        return insightFacade.performQuery(obj2).then(function(insightResponse: InsightResponse){
-            //Log.test('Code: ' + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(200);
-        }).catch(function (insightResponse: InsightResponse) {
-            //console.log("in catch:");
-            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
-            expect.fail();
-        })
-
-    });
-    */
 
 
     it("test if perform query all courses with same department" , function () {
@@ -578,6 +564,36 @@ describe("PerformQuerrySpec", function () {
 
     });
 
+    it("test if perform query to check for Apply duplicate apply key should fail" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggq9.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply key in sort is not in columns should fail" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ10.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
     it("test if perform query to check for Apply test 4 should pass" , function () {
         this.timeout(30000);
         let data17 = fs.readFileSync('test/Queries/aggQ4.txt');
@@ -590,6 +606,202 @@ describe("PerformQuerrySpec", function () {
             //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
             console.log(insightResponse.body);
             expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 11 should pass" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ11.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply invalid order direction" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ12.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply no Grp" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ13.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply empty Grp" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ14.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply invalid key in grp" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ15.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply no apply" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ16.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply invalid token field" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ17.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply unused string in columns" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ18.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply Bad Token Query 1" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ19.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply Bad Token Query 2" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ20.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply Bad Token Query 3" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ21.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply Bad Token Query 4" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ22.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply Bad Token Query 5" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ23.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
         })
 
     });
@@ -681,6 +893,21 @@ describe("PerformQuerrySpec", function () {
             console.log("in catch:");
             console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
             expect.fail();
+        })
+
+    });
+
+    it("test if perform query when there is no dataset" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ10.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(424);
         })
 
     });
