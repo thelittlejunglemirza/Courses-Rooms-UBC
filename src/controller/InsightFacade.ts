@@ -99,7 +99,6 @@ export default class InsightFacade implements IInsightFacade {
                     let obj = JSON.parse(dataset);
                     eCaught = QueryOperator.extractData(obj, root);
                 }
-
                 if(!("OPTIONS" in query)){
                     throw "Invalid OPTIONS";
                 }

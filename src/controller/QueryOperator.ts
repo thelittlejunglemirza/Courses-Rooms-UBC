@@ -173,7 +173,7 @@ export default class QueryOperator{
     }
 
     static processTransformations(query: any, data: Array<any>, colStrings: Array<string>, cols: Array<string>): Array<string>{
-        let trans = query["TRANSFORMATIONS"]
+        let trans = query["TRANSFORMATIONS"];
         let grp = QueryOperator.getGroup(trans);
         for(let c of cols){
             if(legalKeys.indexOf(c) !== -1){
@@ -209,41 +209,29 @@ export default class QueryOperator{
 
     // return grouped results with applied calculations
     static processGroup(grpStrArr: Array<string>, data: Array<any>): Array<any>{
+        let obj: { [key: string]: Array<any> } = {};
 
         let grpTrim: Array<Array<any>> = [];
         let uniqueSets: Array<string> = [];
-
         for (let i of data) {
             let uniqueSet: string = "";
             for (let k of grpStrArr) {
-                //let obj: { [key: string]: any } = {k: i[k]};
-                if(typeof i[k] === "string"){
+                if (typeof i[k] === "string") {
                     uniqueSet += i[k];
-                }else{
+                } else {
                     let str = i[k].toString();
                     uniqueSet += str;
                 }
 
             }
-            if(uniqueSets.indexOf(uniqueSet) === -1) {
+            if (uniqueSets.indexOf(uniqueSet) === -1) {
                 uniqueSets.push(uniqueSet);
-                let grp: Array<any> = [];
-                grp.push(i);
-                for(let j of data){
-                    if(j !== i){
-                        let flag = true;
-                        for(let k of grpStrArr){
-                            if(i[k] !== j[k]){
-                                flag = false
-                            }
-                        }
-                        if(flag === true){
-                            grp.push(j);
-                        }
-                    }
-                }
-                grpTrim.push(grp);
+                obj[uniqueSet] = [];
             }
+            obj[uniqueSet].push(i);
+        }
+        for(let k of Object.keys(obj)){
+            grpTrim.push(obj[k]);
         }
         return grpTrim;
     }
@@ -301,7 +289,7 @@ export default class QueryOperator{
     }
 
     static processToken(token: string, field: string, grp: Array<any>, key:string){
-        var obj: { [key: string]: any } = {};
+        let obj: { [key: string]: any } = {};
 
         switch (token){
             case 'MAX':

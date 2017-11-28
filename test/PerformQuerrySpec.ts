@@ -439,21 +439,6 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-    /*
-    it ("Erroneous Query Key, Empty WHERE" , function () {
-        this.timeout(10000);
-        let data26 = fs.readFileSync('test/Queries/query26.txt');
-        let obj26 = JSON.parse(data26);
-        return insightFacade.performQuery(obj26).then(function(insightResponse: InsightResponse){
-            expect.fail();
-        }).catch(function (insightResponse: InsightResponse) {
-            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(400);
-            console.log(insightResponse);
-        })
-
-    });
-    */
 
     it ("Erroneous Query Key, Empty IS" , function () {
         this.timeout(10000);
@@ -546,6 +531,22 @@ describe("PerformQuerrySpec", function () {
 
     });
 
+    it("test if perform query to check for EQ" , function () {
+        this.timeout(30000);
+        let data17 = fs.readFileSync('test/Queries/aggQ4.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect.fail();
+        })
+
+    });
+
+
     it ("removing a dataset" , function () {
         this.timeout(20000);
         return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
@@ -559,6 +560,7 @@ describe("PerformQuerrySpec", function () {
 
     });
 
+    /*
     it("Erroneous PQ, no dataset" , function () {
         this.timeout(10000);
 
@@ -570,7 +572,7 @@ describe("PerformQuerrySpec", function () {
         })
 
     });
-    /*
+
     it("Valid D3-Query A", function () {
         this.timeout(10000);
 

@@ -146,20 +146,7 @@ describe("InsightSpec", function () {
         })
 
     });
-    /*
-    it.skip ("removing a dataset that is previously added" , function () {
-        this.timeout(20000);
-        return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
-            Log.test('Code: ' + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(204);
-        }).catch(function (insightResponse: InsightResponse) {
-            console.log("in catch:");
-            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
-            expect.fail();
-        })
 
-    });
-    */
 
 
 });
