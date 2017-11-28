@@ -274,8 +274,9 @@ export default class FileOperator{
         }
     }
 
-    /*
+
     // write the result on a file called Query.json
+    /*
     writeResultToFile(obj: { [key:string] : any}){
         const content = JSON.stringify(obj);
         this.fs.writeFile("test/Query.json", content, 'utf8', function (err: string) {
@@ -288,6 +289,7 @@ export default class FileOperator{
 
     }
     */
+
 
     makeDataString(id:string, iterObj: any, building?: Building, geoLoc?: GeoResponse): String{
         if(id === "courses"){

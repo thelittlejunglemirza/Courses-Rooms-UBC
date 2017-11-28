@@ -531,8 +531,8 @@ describe("PerformQuerrySpec", function () {
 
     });
 
-    it("test if perform query to check for Apply Functionaloty" , function () {
-        this.timeout(30000);
+    it("test if perform query to check for Apply test 1 should pass" , function () {
+        this.timeout(10000);
         let data17 = fs.readFileSync('test/Queries/aggQ1.txt');
         let obj17 = JSON.parse(data17);
         return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
@@ -547,7 +547,38 @@ describe("PerformQuerrySpec", function () {
 
     });
 
-    it("test if perform query to check for a very long process" , function () {
+    it("test if perform query to check for Apply test 2 should pass" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ2.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 3 should fail" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ3.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect.fail();
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(400);
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 4 should pass" , function () {
         this.timeout(30000);
         let data17 = fs.readFileSync('test/Queries/aggQ4.txt');
         let obj17 = JSON.parse(data17);
@@ -557,6 +588,71 @@ describe("PerformQuerrySpec", function () {
         }).catch(function (insightResponse: InsightResponse) {
             //console.log("in catch:");
             //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 5 should pass" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ5.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 6 should pass" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ6.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 7 should pass" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ7.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for Apply test 8 should pass" , function () {
+        this.timeout(10000);
+        let data17 = fs.readFileSync('test/Queries/aggQ8.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
             expect.fail();
         })
 
@@ -564,7 +660,7 @@ describe("PerformQuerrySpec", function () {
 
 
     it ("removing a dataset" , function () {
-        this.timeout(20000);
+        this.timeout(10000);
         return insightFacade.removeDataset("courses").then(function(insightResponse: InsightResponse){
             Log.test('Code: ' + insightResponse.code);
             expect(insightResponse.code).to.deep.equal(204);
@@ -576,65 +672,17 @@ describe("PerformQuerrySpec", function () {
 
     });
 
-    /*
-    it("Erroneous PQ, no dataset" , function () {
+    it ("removing a dataset" , function () {
         this.timeout(10000);
-
-        return insightFacade.performQuery(obj15).then(function(insightResponse: InsightResponse){
-            expect.fail();
+        return insightFacade.removeDataset("rooms").then(function(insightResponse: InsightResponse){
+            Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(204);
         }).catch(function (insightResponse: InsightResponse) {
-            console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
-            expect(insightResponse.code).to.deep.equal(424);
-        })
-
-    });
-
-    it("Valid D3-Query A", function () {
-        this.timeout(10000);
-
-        return insightFacade.performQuery(d3obj0).then(function(insightResponse: InsightResponse){
-            expect(insightResponse.code).to.deep.equal(200);
-            console.log(insightResponse.body);
-        }).catch(function(insightResponse: InsightResponse) {
-            console.log(insightResponse);
-            expect.fail();
-        })
-    })
-
-    it("Valid D3-Query B", function () {
-        this.timeout(10000);
-
-        return insightFacade.performQuery(d3obj1).then(function(insightResponse: InsightResponse){
-            expect(insightResponse.code).to.deep.equal(200);
-            console.log(insightResponse.body);
-        }).catch(function(insightResponse: InsightResponse) {
-            expect.fail();
-        })
-    })
-
-    it("Invalid D3-Query (based on) A", function () {
-        this.timeout(10000);
-
-        return insightFacade.performQuery(d3obj2).then(function(insightResponse: InsightResponse){
-            expect.fail();
-        }).catch(function(insightResponse: InsightResponse) {
-            expect(insightResponse.code).to.deep.equal(400);
-        })
-    })
-    */
-    /*
-    it ("Empty WHERE" , function () {
-        this.timeout(10000);
-        let data26 = fs.readFileSync('test/Queries/query26.txt');
-        let obj26 = JSON.parse(data26);
-        return insightFacade.performQuery(obj26).then(function(insightResponse: InsightResponse){
-            expect(insightResponse.code).to.deep.equal(200);
-            console.log(insightResponse.body);
-        }).catch(function (insightResponse: InsightResponse) {
+            console.log("in catch:");
+            console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
             expect.fail();
         })
 
     });
-    */
 
 });

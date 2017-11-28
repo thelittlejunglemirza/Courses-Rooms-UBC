@@ -62,10 +62,10 @@ function sortUp(keys: Array<string>, arr: Array<any>){
     });
 }
 
-function sortDown(key: any, arr: Array<any>){
+function sortDown(keys: Array<string>, arr: Array<any>){
     return arr.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
-        return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+        var x = a[keys[0]]; var y = b[keys[0]];
+        return ((x > y) ? -1 : ((x < y) ? 1 : settleDown(a,b, keys)));
     });
 }
 
@@ -221,18 +221,20 @@ export default class QueryOperator{
                     let str = i[k].toString();
                     uniqueSet += str;
                 }
-
             }
-            if (uniqueSets.indexOf(uniqueSet) === -1) {
+            try{
+                obj[uniqueSet].push(i);
+            }catch (err){
                 uniqueSets.push(uniqueSet);
                 obj[uniqueSet] = [];
+                obj[uniqueSet].push(i);
             }
-            obj[uniqueSet].push(i);
         }
         for(let k of Object.keys(obj)){
             grpTrim.push(obj[k]);
         }
         return grpTrim;
+
     }
 
     static processApply(trans: any, grpTrim: Array<Array<any>>, grpStrArr: Array<string>, colStrings: Array<string>): Array<any>{
@@ -296,9 +298,9 @@ export default class QueryOperator{
                     if(legalKeysWithTypes[field] !== "number"){
                         throw "Not a number field in Max";
                     }
-                    let max = -1;
+                    let max:number;
                     for (let g of grp) {
-                        if (g[field] > max) {
+                        if (g[field] > max || max === undefined) {
                             max = g[field];
                         }
                     }
@@ -367,7 +369,7 @@ export default class QueryOperator{
                     let count = 0;
                     let fieldArr: Array<any> = [];
                     for (let g of grp) {
-                        if (fieldArr.indexOf(g[field]) === -1) {
+                        if (fieldArr.indexOf(g[field]) === -1 && g[field] !== undefined) {
                             fieldArr.push(g[field]);
                             count++;
                         }

@@ -1,0 +1,32 @@
+{
+    "WHERE":{
+    "IS" : {"courses_dept" : "zool"}
+    },
+
+    "OPTIONS":{
+        "COLUMNS": ["maxAvg", "avgAvg", "countG"],
+        "ORDER": "maxAvg"
+    },
+    "TRANSFORMATIONS": {
+		"GROUP": [
+			"courses_pass"
+		],
+		"APPLY": [
+			{
+				"maxAvg": {
+					"MAX": "courses_avg"
+				}
+			},
+			{
+            	"avgAvg": {
+           			"AVG": "courses_avg"
+          		}
+        	},
+            {
+                "countG": {
+                     "COUNT": "courses_pass"
+                }
+            }
+		]
+	}
+}

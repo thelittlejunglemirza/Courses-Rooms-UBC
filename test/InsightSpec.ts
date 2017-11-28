@@ -53,6 +53,21 @@ describe("InsightSpec", function () {
     });
 
 
+    it ("adding the dataset for the first time to make sure that it creates the json file with code 204" , function () {
+        this.timeout(100000);
+        let data = fs.readFileSync('test/Datasets/rooms.zip');
+        return insightFacade.addDataset("rooms", data.toString('base64')).then(function(insightResponse: InsightResponse){
+            Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(204);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by addDataSet rejected by the error code: " + insightResponse.code);
+            expect.fail();
+        })
+
+    });
+
+
     it ("Adding a valid ZIP with no data at all should return an error code of 400." , function () {
         this.timeout(10000);
         let data = fs.readFileSync('test/Datasets/nocourses.zip');
