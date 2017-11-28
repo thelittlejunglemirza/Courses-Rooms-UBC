@@ -531,7 +531,23 @@ describe("PerformQuerrySpec", function () {
 
     });
 
-    it("test if perform query to check for EQ" , function () {
+    it("test if perform query to check for Apply Functionaloty" , function () {
+        this.timeout(30000);
+        let data17 = fs.readFileSync('test/Queries/aggQ1.txt');
+        let obj17 = JSON.parse(data17);
+        return insightFacade.performQuery(obj17).then(function(insightResponse: InsightResponse){
+            //Log.test('Code: ' + insightResponse.code);
+            expect(insightResponse.code).to.deep.equal(200);
+        }).catch(function (insightResponse: InsightResponse) {
+            //console.log("in catch:");
+            //console.log("the promise returned by PQ rejected by the error code: " + insightResponse.code);
+            console.log(insightResponse.body);
+            expect.fail();
+        })
+
+    });
+
+    it("test if perform query to check for a very long process" , function () {
         this.timeout(30000);
         let data17 = fs.readFileSync('test/Queries/aggQ4.txt');
         let obj17 = JSON.parse(data17);

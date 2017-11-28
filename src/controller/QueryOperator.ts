@@ -210,7 +210,6 @@ export default class QueryOperator{
     // return grouped results with applied calculations
     static processGroup(grpStrArr: Array<string>, data: Array<any>): Array<any>{
         let obj: { [key: string]: Array<any> } = {};
-
         let grpTrim: Array<Array<any>> = [];
         let uniqueSets: Array<string> = [];
         for (let i of data) {
@@ -314,9 +313,9 @@ export default class QueryOperator{
                     if(legalKeysWithTypes[field] !== "number"){
                         throw "Not a number field in Min";
                     }
-                    let min = 99999;
+                    let min:number;
                     for (let g of grp) {
-                        if (g[field] < min) {
+                        if (g[field] < min || min === undefined) {
                             min = g[field];
                         }
                     }
@@ -333,7 +332,9 @@ export default class QueryOperator{
                     }
                     let inputArrAvg: Array<number> = [];
                     for (let g of grp) {
-                        inputArrAvg.push(g[field]);
+                        if(typeof(g[field]) === "number"){
+                            inputArrAvg.push(g[field]);
+                        }
                     }
                     let avg = Number((inputArrAvg.map(val => <any>new Decimal(val)).reduce((a, b) => a.plus(b)).toNumber() / inputArrAvg.length).toFixed(2));
                     obj[key] = avg;
@@ -367,8 +368,8 @@ export default class QueryOperator{
                     let fieldArr: Array<any> = [];
                     for (let g of grp) {
                         if (fieldArr.indexOf(g[field]) === -1) {
-                            count++;
                             fieldArr.push(g[field]);
+                            count++;
                         }
                     }
                     obj[key] = count;
