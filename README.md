@@ -1,2 +1,2 @@
-Courses-Rooms-UBC
+### QueryBasedDataManager-and-WebScraper
 
